@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://c67eytin5khil"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_c6fvj"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="VehicleBody3D" type="VehicleBody3D" parent="."]
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="VehicleBody3D"]
+mesh = SubResource("BoxMesh_c6fvj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VehicleBody3D/CSGMesh3D"]

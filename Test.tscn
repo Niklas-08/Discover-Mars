@@ -1,0 +1,144 @@
+[gd_scene load_steps=11 format=3 uid="uid://bp4m87btd8ibd"]
+
+[ext_resource type="PackedScene" uid="uid://c0eu2hksq1ka7" path="res://player.tscn" id="1_8cj5n"]
+[ext_resource type="Texture2D" uid="uid://byn340u85jo7c" path="res://texture/eso0932a.jpg" id="1_xspfe"]
+[ext_resource type="Texture2D" uid="uid://by6pyj141jmt3" path="res://texture/Solarsystemscope_texture_8k_mars.jpg" id="2_bebf8"]
+[ext_resource type="Texture2D" uid="uid://bqnaacr2mc8ot" path="res://texture/360_F_172938137_UkiDZZ62jvHo71RNAGPZSOwnuBcF70SR.jpg" id="3_elry4"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_i2ctk"]
+panorama = ExtResource("1_xspfe")
+
+[sub_resource type="Sky" id="Sky_20ogf"]
+sky_material = SubResource("PanoramaSkyMaterial_i2ctk")
+radiance_size = 0
+
+[sub_resource type="Environment" id="Environment_rq3s8"]
+background_mode = 2
+background_color = Color(0, 0, 0.0627451, 1)
+background_energy_multiplier = 0.21
+sky = SubResource("Sky_20ogf")
+sky_rotation = Vector3(-0.174533, 0, -0.279253)
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="FogMaterial" id="FogMaterial_dalrk"]
+albedo = Color(0.907935, 0.52683, 0.216087, 1)
+emission = Color(0.699101, 0.423192, 0.208105, 1)
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_p72tw"]
+next_pass = SubResource("FogMaterial_dalrk")
+disable_ambient_light = true
+vertex_color_is_srgb = true
+albedo_texture = ExtResource("2_bebf8")
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_t1jvd"]
+albedo_texture = ExtResource("3_elry4")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_rq3s8")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, -3.3)
+light_color = Color(0.385492, 0.385493, 0.385492, 1)
+light_energy = 1.322
+light_indirect_energy = 2.454
+light_volumetric_fog_energy = 1.17
+shadow_enabled = true
+
+[node name="CSGCombiner3D2" type="CSGCombiner3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.400001, -0.5, -1.15)
+use_collision = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.65, 0, 214.5)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.35, 0, 214.5)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 244.95, 0, 214.5)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.65, 0, -220.6)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -240.35, 0, -220.6)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="CSGCombiner3D2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 244.95, 0, -220.6)
+use_collision = true
+size = Vector3(243.3, 0.4, 435.9)
+material = SubResource("ORMMaterial3D_p72tw")
+
+[node name="Player" parent="." instance=ExtResource("1_8cj5n")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0, -0.699997)
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+material_override = SubResource("ORMMaterial3D_t1jvd")
+use_collision = true
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, -1.7, -0.9, 1.09999)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, -0.173648, 0.984808, 0, 0.984808, 0.173648, -1, 7.5904e-09, -4.30473e-08, -1.7, -1.1, 0.399994)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGPolygon3D3" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 1, -0.9, -1.90001)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGPolygon3D4" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, -0.173648, 0.984808, 0, 0.984808, 0.173648, -1, 7.5904e-09, -4.30473e-08, 1, -1.1, -2.60001)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGPolygon3D5" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, -8.5, -0.9, -1.90001)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGPolygon3D6" type="CSGPolygon3D" parent="CSGCombiner3D"]
+transform = Transform3D(-4.37114e-08, -0.173648, 0.984808, 0, 0.984808, 0.173648, -1, 7.5904e-09, -4.30473e-08, -7.8, -1.1, -2.60001)
+polygon = PackedVector2Array(-3.1, -1.5, -0.3, 1.7, 2.6, -0.2, 1, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6, 1.9, 19.1)
+size = Vector3(7.8, 4.4, 0.4)
+
+[node name="CSGCylinder3D2" type="CSGCylinder3D" parent="CSGBox3D"]
+transform = Transform3D(0.8, 0, 0, 0, 5.96047e-08, 4.3008, 0, -0.8, 3.20435e-07, 0, -1, -0.300001)
+operation = 2
+use_collision = true
+radius = 0.9
+sides = 20
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 1.6, 4.1, 19.1)
+use_collision = true
+radius = 3.9
+height = 0.4
+sides = 20
+
+[node name="CSGCylinder3D2" type="CSGCylinder3D" parent="CSGCylinder3D"]
+transform = Transform3D(0.8, 0, 0, 0, -0.8, 2.29239e-07, 0, -5.44379e-08, -4.3008, 0, -0.1, 3.2)
+operation = 2
+use_collision = true
+radius = 0.9
+sides = 20
