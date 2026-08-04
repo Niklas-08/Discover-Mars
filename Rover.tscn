@@ -1,12 +1,198 @@
-[gd_scene load_steps=2 format=3 uid="uid://c67eytin5khil"]
+[gd_scene format=3 uid="uid://c67eytin5khil"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_c6fvj"]
+[ext_resource type="Script" uid="uid://b07mj7fm5wvxo" path="res://Rover.gd" id="1_rover"]
 
-[node name="Node3D" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(2.4, 0.5, 4.2)
 
-[node name="VehicleBody3D" type="VehicleBody3D" parent="."]
+[sub_resource type="BoxMesh" id="Mesh_chassis"]
+size = Vector3(2.4, 0.22, 4.2)
 
-[node name="CSGMesh3D" type="CSGMesh3D" parent="VehicleBody3D"]
-mesh = SubResource("BoxMesh_c6fvj")
+[sub_resource type="StandardMaterial3D" id="Mat_chassis"]
+albedo_color = Color(0.72, 0.58, 0.42, 1)
+metallic = 0.2
+roughness = 0.8
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="VehicleBody3D/CSGMesh3D"]
+[sub_resource type="BoxMesh" id="Mesh_cabin"]
+size = Vector3(2, 0.85, 2.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_cabin"]
+albedo_color = Color(0.55, 0.45, 0.32, 1)
+metallic = 0.3
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="Mesh_window"]
+size = Vector3(1.7, 0.5, 0.05)
+
+[sub_resource type="StandardMaterial3D" id="Mat_window"]
+transparency = 1
+albedo_color = Color(0.4, 0.7, 1, 0.35)
+metallic = 0.5
+roughness = 0.05
+
+[sub_resource type="BoxMesh" id="Mesh_solar"]
+size = Vector3(1.6, 0.04, 1.1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_solar"]
+albedo_color = Color(0.08, 0.12, 0.45, 1)
+metallic = 0.6
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="Mesh_antenna"]
+top_radius = 0.03
+bottom_radius = 0.06
+height = 0.8
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_antenna"]
+albedo_color = Color(0.8, 0.8, 0.8, 1)
+metallic = 0.9
+roughness = 0.3
+
+[sub_resource type="CylinderMesh" id="Mesh_axle"]
+top_radius = 0.045
+bottom_radius = 0.045
+height = 2.25
+radial_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Mat_axle"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+metallic = 0.8
+roughness = 0.4
+
+[sub_resource type="CylinderMesh" id="Mesh_wheel"]
+top_radius = 0.38
+bottom_radius = 0.38
+height = 0.28
+radial_segments = 18
+
+[sub_resource type="StandardMaterial3D" id="Mat_wheel"]
+albedo_color = Color(0.15, 0.15, 0.15, 1)
+roughness = 0.95
+
+[node name="Rover" type="VehicleBody3D" unique_id=1956140940]
+mass = 850.0
+script = ExtResource("1_rover")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=518071661]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_body")
+
+[node name="Chassis" type="MeshInstance3D" parent="." unique_id=1921212576]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11, 0)
+mesh = SubResource("Mesh_chassis")
+surface_material_override/0 = SubResource("Mat_chassis")
+
+[node name="Cabin" type="MeshInstance3D" parent="." unique_id=1954142922]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.645, -0.5)
+mesh = SubResource("Mesh_cabin")
+surface_material_override/0 = SubResource("Mat_cabin")
+
+[node name="WindowFront" type="MeshInstance3D" parent="." unique_id=1270859226]
+transform = Transform3D(1, 0, 0, 0, 0.978148, -0.207912, 0, 0.207912, 0.978148, 0, 0.72, -1.62)
+mesh = SubResource("Mesh_window")
+surface_material_override/0 = SubResource("Mat_window")
+
+[node name="SolarLeft" type="MeshInstance3D" parent="." unique_id=301975603]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.8, 0.72, 0.10000002)
+mesh = SubResource("Mesh_solar")
+surface_material_override/0 = SubResource("Mat_solar")
+
+[node name="SolarRight" type="MeshInstance3D" parent="." unique_id=1312271201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8, 0.72, 0.100000024)
+mesh = SubResource("Mesh_solar")
+surface_material_override/0 = SubResource("Mat_solar")
+
+[node name="Antenna" type="MeshInstance3D" parent="." unique_id=1019326505]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6, 1.2, 0.3)
+mesh = SubResource("Mesh_antenna")
+surface_material_override/0 = SubResource("Mat_antenna")
+
+[node name="AxleFront" type="MeshInstance3D" parent="." unique_id=1379043224]
+transform = Transform3D(0, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 0, 0, -0.024999976, -1.0927845e-09, -1.55)
+mesh = SubResource("Mesh_axle")
+surface_material_override/0 = SubResource("Mat_axle")
+
+[node name="AxleRear" type="MeshInstance3D" parent="." unique_id=253932929]
+transform = Transform3D(0, -1, -4.371139e-08, 0, -4.371139e-08, 1, -1, 0, 0, 0, -0.100000046, 1.55)
+mesh = SubResource("Mesh_axle")
+surface_material_override/0 = SubResource("Mat_axle")
+
+[node name="WheelFrontLeft" type="VehicleWheel3D" parent="." unique_id=1532105834]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, -1.55)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.38
+wheel_rest_length = 0.28
+wheel_friction_slip = 3.2
+suspension_travel = 0.22
+suspension_stiffness = 38.0
+suspension_max_force = 9000.0
+damping_compression = 0.45
+damping_relaxation = 0.5
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelFrontLeft" unique_id=1192695791]
+transform = Transform3D(1.7881393e-07, 1, 0, 0, 0, 1, 1, -1.7881393e-07, 0, 0, 0, 0)
+mesh = SubResource("Mesh_wheel")
+surface_material_override/0 = SubResource("Mat_wheel")
+
+[node name="WheelFrontRight" type="VehicleWheel3D" parent="." unique_id=1448131044]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, -1.55)
+use_as_traction = true
+use_as_steering = true
+wheel_radius = 0.38
+wheel_rest_length = 0.28
+wheel_friction_slip = 3.2
+suspension_travel = 0.22
+suspension_stiffness = 38.0
+suspension_max_force = 9000.0
+damping_compression = 0.45
+damping_relaxation = 0.5
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelFrontRight" unique_id=936736558]
+transform = Transform3D(2.9802322e-08, 1, 0, 0, 0, 1, 1, -2.9802322e-08, 0, 0, 0, 0)
+mesh = SubResource("Mesh_wheel")
+surface_material_override/0 = SubResource("Mat_wheel")
+
+[node name="WheelRearLeft" type="VehicleWheel3D" parent="." unique_id=1560332780]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 1.55)
+use_as_traction = true
+wheel_radius = 0.38
+wheel_rest_length = 0.28
+wheel_friction_slip = 3.2
+suspension_travel = 0.22
+suspension_stiffness = 38.0
+suspension_max_force = 9000.0
+damping_compression = 0.45
+damping_relaxation = 0.5
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelRearLeft" unique_id=1961861742]
+transform = Transform3D(1.1920929e-07, 1, 0, 0, 0, 1, 1, -1.1920929e-07, 0, 0, 0, 0)
+mesh = SubResource("Mesh_wheel")
+surface_material_override/0 = SubResource("Mat_wheel")
+
+[node name="WheelRearRight" type="VehicleWheel3D" parent="." unique_id=924565354]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 1.55)
+use_as_traction = true
+wheel_radius = 0.38
+wheel_rest_length = 0.28
+wheel_friction_slip = 3.2
+suspension_travel = 0.22
+suspension_stiffness = 38.0
+suspension_max_force = 9000.0
+damping_compression = 0.45
+damping_relaxation = 0.5
+
+[node name="WheelMesh" type="MeshInstance3D" parent="WheelRearRight" unique_id=167633419]
+transform = Transform3D(0.17364813, 0.9848077, 0, 0, 0, 1, 0.9848077, -0.17364813, 0, 0, 0, 0)
+mesh = SubResource("Mesh_wheel")
+surface_material_override/0 = SubResource("Mat_wheel")
+
+[node name="CameraYaw" type="Node3D" parent="." unique_id=1647370946]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="CameraPitch" type="Node3D" parent="CameraYaw" unique_id=286106483]
+
+[node name="Camera3D" type="Camera3D" parent="CameraYaw/CameraPitch" unique_id=766623987]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 6)
+fov = 72.0

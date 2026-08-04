@@ -57,12 +57,29 @@ var camera_velocity: float = 0.0  # Für das Lag-System
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var world_environment: WorldEnvironment = get_viewport().find_child("WorldEnvironment", true, false)
 
+# Rover Wechsel
+var rover: Node = null
+var in_rover: bool = false
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.fov = fov
 	update_post_processing()
+	# Deferred damit alle Szenen-Nodes inkl. Rover schon bereit sind
+	call_deferred("_find_rover")
+
+func _find_rover():
+	rover = get_tree().get_first_node_in_group("rover")
+	if rover == null:
+		push_warning("Rover nicht gefunden! Ist die Gruppe 'rover' gesetzt?")
 
 func _input(event):
+	# Wenn im Rover: nur switch_vehicle verarbeiten
+	if in_rover:
+		if event.is_action_pressed("switch_vehicle"):
+			_exit_rover()
+		return
+
 	# Maus-Look
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		camera_rotation.x -= event.relative.y * mouse_sensitivity
@@ -86,7 +103,16 @@ func _input(event):
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
+	# Rover Ein-/Aussteigen
+	if event.is_action_pressed("switch_vehicle") and rover != null:
+		_enter_rover()
+
 func _physics_process(delta):
+	if in_rover:
+		# Spieler bleibt unsichtbar beim Rover
+		global_position = rover.global_position + Vector3(0, 0.5, 0)
+		return
+
 	if flight_mode:
 		handle_flight_movement(delta)
 	else:
@@ -201,6 +227,22 @@ func handle_camera(delta):
 			camera.global_position = result.position - (head.global_position - result.position).normalized() * 0.2
 		else:
 			camera.global_position = desired_position
+
+func _enter_rover():
+	in_rover = true
+	collision_shape.disabled = true
+	visible = false
+	velocity = Vector3.ZERO
+	rover.activate()
+
+func _exit_rover():
+	in_rover = false
+	collision_shape.disabled = false
+	visible = true
+	# Spieler seitlich neben den Rover setzen
+	global_position = rover.global_position + rover.global_transform.basis.x * 2.5 + Vector3(0, 1.0, 0)
+	camera.current = true
+	rover.deactivate()
 
 func update_post_processing():
 	if not world_environment or not world_environment.environment:

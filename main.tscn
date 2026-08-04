@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://dvxc3if6rkr5a"]
+[gd_scene load_steps=6 format=3 uid="uid://dvxc3if6rkr5a"]
 
 [ext_resource type="PackedScene" uid="uid://c0eu2hksq1ka7" path="res://player.tscn" id="1_wmohr"]
+[ext_resource type="PackedScene" uid="uid://c67eytin5khil" path="res://Rover.tscn" id="2_rover"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_rlkwe"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -109,3 +110,7 @@ size = Vector3(1, 3.5, 1)
 [node name="Player" parent="." instance=ExtResource("1_wmohr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9, 4.3, 0.0999994)
 motion_blur_enabled = true
+
+[node name="Rover" parent="." instance=ExtResource("2_rover")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0, 2.0, 0.0)
+groups = ["rover"]
