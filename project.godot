@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Discover Mars"
-run/main_scene="res://main.tscn"
+run/main_scene="uid://b8ijjh4sqvtks"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

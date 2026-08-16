@@ -1,0 +1,57 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://widqbt7vs3m1"]
+
+[ext_resource type="Texture2D" uid="uid://bbfkmlmxljhik" path="res://assets/materials/mars_albedo_noise.tres" id="2_soil"]
+[ext_resource type="Texture2D" uid="uid://djtn75mak2lra" path="res://assets/materials/mars_rock_noise.tres" id="3_rock"]
+[ext_resource type="Texture2D" uid="uid://dpu0fxob031k5" path="res://assets/materials/mars_roughness_noise.tres" id="4_rough"]
+
+[sub_resource type="Shader" id="Shader_mars"]
+code = "shader_type spatial;
+
+uniform sampler2D soil_noise_tex : source_color, hint_default_white;
+uniform sampler2D rock_noise_tex : source_color, hint_default_white;
+uniform sampler2D roughness_noise_tex : hint_default_white;
+
+uniform vec4 soil_color : source_color = vec4(0.545, 0.271, 0.075, 1.0);
+uniform vec4 rock_color_low : source_color = vec4(0.82, 0.52, 0.18, 1.0);
+uniform vec4 rock_color_high : source_color = vec4(0.76, 0.36, 0.20, 1.0);
+
+uniform float height_min : hint_range(-30.0, 30.0) = 20.0;
+uniform float height_max : hint_range(-30.0, 30.0) = 24.0;
+uniform float uv_scale : hint_range(0.1, 10.0) = 1.0;
+
+varying vec3 world_pos;
+
+void vertex() {
+    world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+
+void fragment() {
+    vec2 uv = UV * uv_scale;
+    float soil_n = texture(soil_noise_tex, uv * 0.5).r;
+    float rock_n = texture(rock_noise_tex, uv * 1.8).r;
+    float rough_n = texture(roughness_noise_tex, uv).r;
+    float h = world_pos.z;
+    float height_blend = smoothstep(height_min, height_max, h);
+    float rock_blend = clamp(height_blend + (rock_n - 0.5) * 0.3, 0.0, 1.0);
+    float t = clamp((h - height_min) / max(height_max - height_min, 0.001), 0.0, 1.0);
+    vec3 rock_rgb = mix(rock_color_low.rgb, rock_color_high.rgb, t);
+    rock_rgb *= (0.72 + rock_n * 0.55);
+    vec3 s_rgb = soil_color.rgb * (0.68 + soil_n * 0.64);
+    ALBEDO = mix(s_rgb, rock_rgb, rock_blend);
+    ROUGHNESS = mix(0.92 - rough_n * 0.10, 0.70 - rough_n * 0.15, rock_blend);
+    METALLIC = 0.0;
+    SPECULAR = mix(0.04, 0.18, rock_blend);
+}"
+
+[resource]
+render_priority = 0
+shader = SubResource("Shader_mars")
+shader_parameter/soil_noise_tex = ExtResource("2_soil")
+shader_parameter/rock_noise_tex = ExtResource("3_rock")
+shader_parameter/roughness_noise_tex = ExtResource("4_rough")
+shader_parameter/soil_color = Color(0.545, 0.271, 0.075, 1)
+shader_parameter/rock_color_low = Color(0.82, 0.52, 0.18, 1)
+shader_parameter/rock_color_high = Color(0.76, 0.36, 0.2, 1)
+shader_parameter/height_min = 20.0
+shader_parameter/height_max = 24.0
+shader_parameter/uv_scale = 1.0

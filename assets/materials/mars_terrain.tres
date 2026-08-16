@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dhhgoxqb67gcf"]
+
+[ext_resource type="Texture2D" uid="uid://bbfkmlmxljhik" path="res://assets/materials/mars_albedo_noise.tres" id="1_r20ul"]
+[ext_resource type="Texture2D" uid="uid://dpu0fxob031k5" path="res://assets/materials/mars_roughness_noise.tres" id="2_knbgj"]
+
+[resource]
+albedo_color = Color(0.54509807, 0.27058825, 0.07450981, 1)
+albedo_texture = ExtResource("1_r20ul")
+roughness = 0.92
+roughness_texture = ExtResource("2_knbgj")
