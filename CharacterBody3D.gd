@@ -61,6 +61,14 @@ var camera_velocity: float = 0.0  # Für das Lag-System
 var rover: Node = null
 var in_rover: bool = false
 
+# === Interaktion mit dem Rover ===
+@export_category("Interaction")
+## Wie nah man am Rover stehen muss, um einsteigen zu koennen (Meter).
+@export var rover_interact_distance: float = 6.0
+var can_enter_rover: bool = false
+var _rover_toggle_cooldown: float = 0.0
+@onready var hud: CanvasLayer = get_tree().get_first_node_in_group("interaction_hud")
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.fov = fov
@@ -74,9 +82,9 @@ func _find_rover():
 		push_warning("Rover nicht gefunden! Ist die Gruppe 'rover' gesetzt?")
 
 func _input(event):
-	# Wenn im Rover: nur switch_vehicle verarbeiten
+	# Wenn im Rover: nur Aussteigen verarbeiten
 	if in_rover:
-		if event.is_action_pressed("switch_vehicle"):
+		if _rover_toggle_cooldown <= 0.0 and (event.is_action_pressed("interact") or event.is_action_pressed("switch_vehicle")):
 			_exit_rover()
 		return
 
@@ -103,13 +111,15 @@ func _input(event):
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-	# Rover Ein-/Aussteigen
-	if event.is_action_pressed("switch_vehicle") and rover != null:
+	# Rover Ein-/Aussteigen: nur wenn nah genug dran
+	if event.is_action_pressed("interact") and can_enter_rover and _rover_toggle_cooldown <= 0.0:
 		_enter_rover()
 
 func _physics_process(delta):
+	_update_rover_prompt()
+
 	if in_rover:
-		# Spieler bleibt unsichtbar beim Rover
+		# Spieler faehrt unsichtbar mit dem Rover mit
 		global_position = rover.global_position + Vector3(0, 0.5, 0)
 		return
 
@@ -228,21 +238,55 @@ func handle_camera(delta):
 		else:
 			camera.global_position = desired_position
 
+func _update_rover_prompt():
+	if _rover_toggle_cooldown > 0.0:
+		_rover_toggle_cooldown -= get_physics_process_delta_time()
+
+	# Rover ggf. nachtraeglich finden (falls er spaeter gespawnt wurde)
+	if rover == null or not is_instance_valid(rover):
+		rover = get_tree().get_first_node_in_group("rover")
+
+	if hud == null or not is_instance_valid(hud):
+		hud = get_tree().get_first_node_in_group("interaction_hud")
+
+	if in_rover:
+		can_enter_rover = false
+		if hud:
+			hud.show_prompt("[F]  Rover verlassen")
+		return
+
+	can_enter_rover = false
+	if rover != null and is_instance_valid(rover):
+		var dist = global_position.distance_to(rover.global_position)
+		can_enter_rover = dist <= rover_interact_distance
+
+	if hud:
+		if can_enter_rover:
+			hud.show_prompt("[F]  Rover betreten")
+		else:
+			hud.hide_prompt()
+
 func _enter_rover():
+	if rover == null or not is_instance_valid(rover):
+		return
 	in_rover = true
+	_rover_toggle_cooldown = 0.4
 	collision_shape.disabled = true
 	visible = false
 	velocity = Vector3.ZERO
-	rover.activate()
+	if rover.has_method("activate"):
+		rover.activate()
 
 func _exit_rover():
 	in_rover = false
+	_rover_toggle_cooldown = 0.4
 	collision_shape.disabled = false
 	visible = true
 	# Spieler seitlich neben den Rover setzen
-	global_position = rover.global_position + rover.global_transform.basis.x * 2.5 + Vector3(0, 1.0, 0)
+	global_position = rover.global_position + rover.global_transform.basis.x * 3.5 + Vector3(0, 1.5, 0)
 	camera.current = true
-	rover.deactivate()
+	if rover.has_method("deactivate"):
+		rover.deactivate()
 
 func update_post_processing():
 	if not world_environment or not world_environment.environment:

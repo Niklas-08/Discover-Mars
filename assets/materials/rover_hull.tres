@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://bms61ybaaxkd4"]
+
+[ext_resource type="Texture2D" uid="uid://4hxyhru4x3m1" path="res://assets/models/Rover/textures/MMSEV_Color.png" id="1_nng37"]
+[ext_resource type="Texture2D" uid="uid://4ijo0l18167j" path="res://assets/models/Rover/textures/MMSEV_Normal.png" id="2_6n5y4"]
+
+[resource]
+albedo_texture = ExtResource("1_nng37")
+roughness = 0.494
+normal_enabled = true
+normal_texture = ExtResource("2_6n5y4")

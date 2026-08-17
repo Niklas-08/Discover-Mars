@@ -4,6 +4,8 @@
 [ext_resource type="PackedScene" uid="uid://c0eu2hksq1ka7" path="res://player.tscn" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://drykdg8guckek" path="res://scripts/terrain_collision.gd" id="3_h2yge"]
 [ext_resource type="Material" uid="uid://d31qbvn6l7ips" path="res://assets/materials/mars_regolith.tres" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://k6ur25lkueea" path="res://exploration_vehicle.tscn" id="5_rover"]
+[ext_resource type="Script" path="res://scripts/interaction_hud.gd" id="6_hud"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -17,6 +19,11 @@ background_mode = 2
 sky = SubResource("Sky_h2yge")
 tonemap_mode = 2
 glow_enabled = true
+
+[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
+font_size = 26
+outline_size = 8
+outline_color = Color(0, 0, 0, 0.7)
 
 [node name="main" type="Node3D" unique_id=975692537]
 
@@ -37,3 +44,27 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.8, 0)
 [node name="TerrainBody" type="StaticBody3D" parent="." unique_id=1627455417]
 script = ExtResource("3_h2yge")
 terrain_material = ExtResource("4_1bvp3")
+
+[node name="ExplorationVehicle" parent="." groups=["rover"] instance=ExtResource("5_rover")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -1.4, -6)
+
+[node name="InteractionHUD" type="CanvasLayer" parent="." groups=["interaction_hud"]]
+layer = 10
+script = ExtResource("6_hud")
+
+[node name="Prompt" type="Label" parent="InteractionHUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -220.0
+offset_top = -110.0
+offset_right = 220.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "[F]  Rover betreten"
+label_settings = SubResource("LabelSettings_prompt")
+horizontal_alignment = 1
+vertical_alignment = 1

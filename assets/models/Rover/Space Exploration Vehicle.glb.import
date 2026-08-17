@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bm1mjrf5nrw1n"
-valid=false
+uid="uid://cff4ie878tjmj"
+path="res://.godot/imported/Space Exploration Vehicle.glb-ccd91201927de9dafaebdafbbb26eb0c.scn"
 
 [deps]
 
 source_file="res://assets/models/Rover/Space Exploration Vehicle.glb"
+dest_files=["res://.godot/imported/Space Exploration Vehicle.glb-ccd91201927de9dafaebdafbbb26eb0c.scn"]
 
 [params]
 
