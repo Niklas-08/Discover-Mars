@@ -1,66 +1,39 @@
 [gd_scene format=3 uid="uid://b8ijjh4sqvtks"]
 
 [ext_resource type="PackedScene" uid="uid://dnfo3tqa5d67w" path="res://assets/models/Mars/Mars - Gale Crater.glb" id="1_ig7tw"]
-[ext_resource type="NoiseTexture2D" uid="uid://bbfkmlmxljhik" path="res://assets/materials/mars_albedo_noise.tres" id="2_soil"]
-[ext_resource type="NoiseTexture2D" uid="uid://djtn75mak2lra" path="res://assets/materials/mars_rock_noise.tres" id="3_rock"]
-[ext_resource type="NoiseTexture2D" uid="uid://dpu0fxob031k5" path="res://assets/materials/mars_roughness_noise.tres" id="4_rough"]
+[ext_resource type="PackedScene" uid="uid://c0eu2hksq1ka7" path="res://player.tscn" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://drykdg8guckek" path="res://scripts/terrain_collision.gd" id="3_h2yge"]
+[ext_resource type="Material" uid="uid://d31qbvn6l7ips" path="res://assets/materials/mars_regolith.tres" id="4_1bvp3"]
 
-[sub_resource type="Shader" id="Shader_mars"]
-code = "shader_type spatial;
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
 
-uniform sampler2D soil_noise_tex : source_color, hint_default_white;
-uniform sampler2D rock_noise_tex : source_color, hint_default_white;
-uniform sampler2D roughness_noise_tex : hint_default_white;
+[sub_resource type="Sky" id="Sky_h2yge"]
+sky_material = SubResource("ProceduralSkyMaterial_0xm2m")
 
-uniform vec4 soil_color : source_color = vec4(0.545, 0.271, 0.075, 1.0);
-uniform vec4 rock_color_low  : source_color = vec4(0.82, 0.52, 0.18, 1.0);
-uniform vec4 rock_color_high : source_color = vec4(0.76, 0.36, 0.20, 1.0);
-
-uniform float height_min : hint_range(20.0, 30.0) = 23.0;
-uniform float height_max : hint_range(20.0, 35.0) = 25.0;
-uniform float uv_scale   : hint_range(0.1, 10.0)  = 1.0;
-
-varying vec3 world_pos;
-
-void vertex() {
-    world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
-}
-
-void fragment() {
-    vec2 uv = UV * uv_scale;
-    float soil_n  = texture(soil_noise_tex,     uv * 0.5).r;
-    float rock_n  = texture(rock_noise_tex,      uv * 1.8).r;
-    float rough_n = texture(roughness_noise_tex, uv).r;
-    float height_blend = smoothstep(height_min, height_max, world_pos.y);
-    float rock_blend   = clamp(height_blend + (rock_n - 0.5) * 0.3, 0.0, 1.0);
-    float t = clamp((world_pos.y - height_min) / max(height_max - height_min, 0.001), 0.0, 1.0);
-    vec3 rock_rgb = mix(rock_color_low.rgb, rock_color_high.rgb, t);
-    rock_rgb *= (0.72 + rock_n * 0.55);
-    vec3 s_rgb = soil_color.rgb * (0.68 + soil_n * 0.64);
-    ALBEDO    = mix(s_rgb, rock_rgb, rock_blend);
-    ROUGHNESS = mix(0.92 - rough_n * 0.10, 0.70 - rough_n * 0.15, rock_blend);
-    METALLIC  = 0.0;
-    SPECULAR  = mix(0.04, 0.18, rock_blend);
-}"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mars"]
-shader = SubResource("Shader_mars")
-shader_parameter/soil_noise_tex = ExtResource("2_soil")
-shader_parameter/rock_noise_tex = ExtResource("3_rock")
-shader_parameter/roughness_noise_tex = ExtResource("4_rough")
-shader_parameter/soil_color = Color(0.545, 0.271, 0.075, 1.0)
-shader_parameter/rock_color_low = Color(0.82, 0.52, 0.18, 1.0)
-shader_parameter/rock_color_high = Color(0.76, 0.36, 0.20, 1.0)
-shader_parameter/height_min = 23.0
-shader_parameter/height_max = 25.0
-shader_parameter/uv_scale = 1.0
+[sub_resource type="Environment" id="Environment_1bvp3"]
+background_mode = 2
+sky = SubResource("Sky_h2yge")
+tonemap_mode = 2
+glow_enabled = true
 
 [node name="main" type="Node3D" unique_id=975692537]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2103172034]
+environment = SubResource("Environment_1bvp3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1755537478]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+directional_shadow_max_distance = 1.0
 
 [node name="MarsGaleCrater" parent="." unique_id=164574589 instance=ExtResource("1_ig7tw")]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 
-[node name="empty_1" parent="MarsGaleCrater" index="0"]
+[node name="Player" parent="." unique_id=2142456167 instance=ExtResource("2_0xm2m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.8, 0)
 
-[node name="empty_2" parent="MarsGaleCrater/empty_1" index="0"]
-material_override = SubResource("ShaderMaterial_mars")
+[node name="TerrainBody" type="StaticBody3D" parent="." unique_id=1627455417]
+script = ExtResource("3_h2yge")
+terrain_material = ExtResource("4_1bvp3")

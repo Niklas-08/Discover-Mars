@@ -1,0 +1,27 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dmarsregolith01"]
+
+[ext_resource type="Shader" path="res://assets/materials/mars_regolith.gdshader" id="1_shader"]
+[ext_resource type="Texture2D" uid="uid://dstfinegrain01" path="res://assets/materials/mars_dust_fine.tres" id="2_dust"]
+[ext_resource type="Texture2D" uid="uid://dstonecoarse01" path="res://assets/materials/mars_stone_coarse.tres" id="3_stone"]
+[ext_resource type="Texture2D" uid="uid://dstnormalmap01" path="res://assets/materials/mars_detail_normal.tres" id="4_norm"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_shader")
+shader_parameter/dust_fine_tex = ExtResource("2_dust")
+shader_parameter/stone_tex = ExtResource("3_stone")
+shader_parameter/detail_normal = ExtResource("4_norm")
+shader_parameter/sand_color = Color(0.44, 0.263, 0.176, 1)
+shader_parameter/stone_color = Color(0.278, 0.176, 0.141, 1)
+shader_parameter/dust_color = Color(0.612, 0.435, 0.325, 1)
+shader_parameter/macro_scale = 0.0035
+shader_parameter/meso_scale = 0.028
+shader_parameter/micro_scale = 0.13
+shader_parameter/normal_scale = 0.11
+shader_parameter/normal_strength = 0.45
+shader_parameter/stone_amount = 0.58
+shader_parameter/dust_amount = 0.6
+shader_parameter/slope_bias = 2.6
+shader_parameter/grain_strength = 0.09
+shader_parameter/powder_scatter = 0.2
+shader_parameter/roughness_floor = 0.97

@@ -1,0 +1,15 @@
+[gd_resource type="NoiseTexture2D" format=3 uid="uid://00phurr30ljc"]
+
+[sub_resource type="FastNoiseLite" id="FNL_norm"]
+noise_type = 0
+seed = 909
+frequency = 0.09
+fractal_octaves = 6
+
+[resource]
+width = 1024
+height = 1024
+noise = SubResource("FNL_norm")
+seamless = true
+as_normal_map = true
+bump_strength = 3.5
