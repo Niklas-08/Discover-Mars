@@ -1,0 +1,30 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dmarsskymat01"]
+
+[ext_resource type="Shader" path="res://assets/materials/mars_sky.gdshader" id="1_sky"]
+
+[resource]
+shader = ExtResource("1_sky")
+shader_parameter/sun_direction = Vector3(0, 0.4, -1)
+shader_parameter/sun_angular_radius = 0.0032
+shader_parameter/sun_disk_color = Color(1, 0.97, 0.9, 1)
+shader_parameter/sun_disk_color_low = Color(0.82, 0.9, 1, 1)
+shader_parameter/sun_intensity = 14.0
+shader_parameter/day_zenith_color = Color(0.34, 0.25, 0.21, 1)
+shader_parameter/day_horizon_color = Color(0.8, 0.58, 0.4, 1)
+shader_parameter/horizon_falloff = 3.0
+shader_parameter/day_exposure = 1.0
+shader_parameter/dust_forward_scatter = 0.35
+shader_parameter/twilight_halo_color = Color(0.26, 0.45, 0.72, 1)
+shader_parameter/twilight_halo_tightness = 22.0
+shader_parameter/twilight_strength = 1.6
+shader_parameter/twilight_width = 0.17
+shader_parameter/night_zenith_color = Color(0.008, 0.01, 0.02, 1)
+shader_parameter/night_horizon_color = Color(0.028, 0.024, 0.03, 1)
+shader_parameter/star_density = 260.0
+shader_parameter/star_coverage = 0.038
+shader_parameter/star_size = 0.10
+shader_parameter/star_brightness = 2.3
+shader_parameter/star_twinkle_speed = 2.2
+shader_parameter/milky_way_axis = Vector3(0.25, 0.3, 0.92)
+shader_parameter/milky_way_strength = 0.55
+shader_parameter/milky_way_width = 0.16

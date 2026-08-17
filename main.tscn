@@ -5,18 +5,18 @@
 [ext_resource type="Script" uid="uid://drykdg8guckek" path="res://scripts/terrain_collision.gd" id="3_h2yge"]
 [ext_resource type="Material" uid="uid://d31qbvn6l7ips" path="res://assets/materials/mars_regolith.tres" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://k6ur25lkueea" path="res://exploration_vehicle.tscn" id="5_rover"]
-[ext_resource type="Script" path="res://scripts/interaction_hud.gd" id="6_hud"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+[ext_resource type="Script" uid="uid://cy3mxl20a81hn" path="res://scripts/interaction_hud.gd" id="6_hud"]
+[ext_resource type="Material" uid="uid://dmarsskymat01" path="res://assets/materials/mars_sky.tres" id="7_sky"]
+[ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="8_cycle"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
-sky_material = SubResource("ProceduralSkyMaterial_0xm2m")
+sky_material = ExtResource("7_sky")
 
 [sub_resource type="Environment" id="Environment_1bvp3"]
 background_mode = 2
 sky = SubResource("Sky_h2yge")
+ambient_light_source = 3
+ambient_light_energy = 0.55
 tonemap_mode = 2
 glow_enabled = true
 
@@ -33,26 +33,36 @@ environment = SubResource("Environment_1bvp3")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1755537478]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
 shadow_enabled = true
-directional_shadow_max_distance = 1.0
+directional_shadow_max_distance = 250.0
+
+[node name="DayNightCycle" type="Node" parent="."]
+script = ExtResource("8_cycle")
+cycle_duration = 120.0
+time_of_day = 0.3
+sun_azimuth_degrees = 35.0
+max_sun_energy = 1.15
 
 [node name="MarsGaleCrater" parent="." unique_id=164574589 instance=ExtResource("1_ig7tw")]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 
 [node name="Player" parent="." unique_id=2142456167 instance=ExtResource("2_0xm2m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.8, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.9999995, 0)
 
 [node name="TerrainBody" type="StaticBody3D" parent="." unique_id=1627455417]
+transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 script = ExtResource("3_h2yge")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="ExplorationVehicle" parent="." groups=["rover"] instance=ExtResource("5_rover")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -1.4, -6)
+[node name="ExplorationVehicle" parent="." unique_id=706117106 groups=["rover"] instance=ExtResource("5_rover")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -3.1, -6)
+max_engine_force = 20000.0
+max_reverse_force = 10000.0
 
-[node name="InteractionHUD" type="CanvasLayer" parent="." groups=["interaction_hud"]]
+[node name="InteractionHUD" type="CanvasLayer" parent="." unique_id=918595 groups=["interaction_hud"]]
 layer = 10
 script = ExtResource("6_hud")
 
-[node name="Prompt" type="Label" parent="InteractionHUD"]
+[node name="Prompt" type="Label" parent="InteractionHUD" unique_id=1253073681]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
