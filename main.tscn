@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://k6ur25lkueea" path="res://exploration_vehicle.tscn" id="5_rover"]
 [ext_resource type="Script" uid="uid://cy3mxl20a81hn" path="res://scripts/interaction_hud.gd" id="6_hud"]
 [ext_resource type="Material" uid="uid://dmarsskymat01" path="res://assets/materials/mars_sky.tres" id="7_sky"]
-[ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="8_cycle"]
+[ext_resource type="Script" uid="uid://cs7183x8husgo" path="res://scripts/day_night_cycle.gd" id="8_cycle"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
 sky_material = ExtResource("7_sky")
@@ -31,16 +31,14 @@ outline_color = Color(0, 0, 0, 0.7)
 environment = SubResource("Environment_1bvp3")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1755537478]
-transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+transform = Transform3D(-0.81915206, 0.17724487, -0.5455036, 0, 0.95105654, 0.309017, 0.57357645, 0.25313193, -0.77905995, 0, 0, 0)
+light_color = Color(1, 0.93596876, 0.859522, 1)
+light_energy = 1.15
 shadow_enabled = true
 directional_shadow_max_distance = 250.0
 
-[node name="DayNightCycle" type="Node" parent="."]
+[node name="DayNightCycle" type="Node" parent="." unique_id=1525630829]
 script = ExtResource("8_cycle")
-cycle_duration = 120.0
-time_of_day = 0.3
-sun_azimuth_degrees = 35.0
-max_sun_energy = 1.15
 
 [node name="MarsGaleCrater" parent="." unique_id=164574589 instance=ExtResource("1_ig7tw")]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)

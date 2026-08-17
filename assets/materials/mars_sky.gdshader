@@ -40,11 +40,15 @@ uniform vec3 night_zenith_color : source_color = vec3(0.008, 0.010, 0.020);
 uniform vec3 night_horizon_color : source_color = vec3(0.028, 0.024, 0.030);
 
 // --- Stars -----------------------------------------------------------------
-uniform float star_density : hint_range(50.0, 600.0) = 260.0;
-uniform float star_coverage : hint_range(0.0, 0.2) = 0.020;
-uniform float star_size : hint_range(0.01, 0.5) = 0.085;
-uniform float star_brightness : hint_range(0.0, 6.0) = 1.6;
+uniform float star_density : hint_range(20.0, 400.0) = 160.0;
+uniform float star_coverage : hint_range(0.0, 0.1) = 0.005;
+uniform float star_size : hint_range(0.002, 0.2) = 0.020;
+uniform float star_brightness : hint_range(0.0, 6.0) = 2.0;
 uniform float star_twinkle_speed : hint_range(0.0, 10.0) = 2.2;
+/// Minimum on-screen star radius in pixels. Stars smaller than roughly one
+/// pixel alias badly and appear to "swim" or jitter when the camera turns,
+/// so they are widened to at least this size and faded instead.
+uniform float star_min_pixels : hint_range(0.2, 4.0) = 0.55;
 uniform vec3 milky_way_axis = vec3(0.25, 0.30, 0.92);
 uniform float milky_way_strength : hint_range(0.0, 3.0) = 0.55;
 uniform float milky_way_width : hint_range(0.05, 0.6) = 0.16;
@@ -88,35 +92,81 @@ float fbm(vec3 p) {
 	return sum;
 }
 
-// Sparse procedural star field. One candidate star per grid cell of the
-// direction sphere; cells are rejected by a hash so stars stay sparse.
+// Sparse procedural star field.
+//
+// Stars live on a 2D grid laid over the cube-face projection of the view
+// direction. Two details matter for stability:
+//
+//  * The 3x3 neighbourhood is sampled, so a star whose disc spills past its
+//    own cell is still drawn by the neighbouring cell. Sampling only the
+//    owning cell clips discs against cell borders and yields square stars.
+//  * Star radius is clamped to at least ~1 screen pixel using fwidth().
+//    Sub-pixel stars land on different pixels from frame to frame as the
+//    camera turns, which reads as stars "swimming" faster than the world.
+//    Widened stars are dimmed by the area ratio so faint ones fade instead
+//    of popping.
 vec3 star_field(vec3 dir, float band_boost) {
-	vec3 p = dir * star_density;
-	vec3 id = floor(p);
-	vec3 gv = fract(p) - 0.5;
-
-	float rnd = hash13(id);
-	float threshold = 1.0 - star_coverage * (1.0 + band_boost);
-	if (rnd < threshold) {
-		return vec3(0.0);
+	// --- Cube-face projection: direction -> stable 2D grid coordinates ---
+	vec3 a = abs(dir);
+	vec2 face_uv;
+	float face;
+	if (a.x >= a.y && a.x >= a.z) {
+		face_uv = dir.zy / a.x;
+		face = dir.x > 0.0 ? 0.0 : 1.0;
+	} else if (a.y >= a.z) {
+		face_uv = dir.xz / a.y;
+		face = dir.y > 0.0 ? 2.0 : 3.0;
+	} else {
+		face_uv = dir.xy / a.z;
+		face = dir.z > 0.0 ? 4.0 : 5.0;
 	}
 
-	// Jitter the star inside its cell so the grid is not visible.
-	vec3 offset = vec3(hash13(id + 1.7), hash13(id + 3.3), hash13(id + 5.1)) - 0.5;
-	float d = length(gv - offset * 0.75);
-	float core = smoothstep(star_size, 0.0, d);
+	vec2 uv = face_uv * star_density;
+	// Size of one screen pixel in grid units. Clamped so the cube-face seams
+	// (where uv jumps) cannot produce a huge value.
+	vec2 duv = fwidth(uv);
+	float pixel_size = clamp(max(duv.x, duv.y), 1e-5, 1.0);
 
-	// Magnitude + colour spread (hot blue-white through cool orange).
-	float mag = hash13(id + 7.7);
-	float brightness = mix(0.25, 1.0, mag * mag);
-	float temp = hash13(id + 11.3);
-	vec3 tint = mix(vec3(1.0, 0.82, 0.68), vec3(0.78, 0.86, 1.0), temp);
+	vec2 gid = floor(uv);
+	vec2 gf = uv - gid;
 
-	// Scintillation - stronger on Mars' thin air than you might expect, but
-	// still subtle.
-	float twinkle = 0.8 + 0.2 * sin(TIME * star_twinkle_speed + rnd * 100.0);
+	float threshold = 1.0 - star_coverage * (1.0 + band_boost);
+	float radius = max(star_size, pixel_size * star_min_pixels);
+	float area_comp = clamp((star_size * star_size) / (radius * radius), 0.10, 1.0);
 
-	return tint * core * brightness * twinkle * star_brightness;
+	vec3 acc = vec3(0.0);
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 neighbour = vec2(float(x), float(y));
+			vec2 cell = gid + neighbour;
+
+			float rnd = hash13(vec3(cell, face));
+			if (rnd < threshold) {
+				continue;
+			}
+
+			// Jitter the star inside its cell so the grid is not visible.
+			vec2 offset = vec2(
+				hash13(vec3(cell, face + 17.0)),
+				hash13(vec3(cell, face + 31.0)));
+			float d = length(gf - (neighbour + offset));
+
+			float core = smoothstep(radius, radius * 0.2, d);
+			float glow = smoothstep(radius * 3.0, 0.0, d) * 0.18;
+
+			// Magnitude + colour spread (hot blue-white through cool orange).
+			float mag = hash13(vec3(cell, face + 7.0));
+			float brightness = mix(0.10, 1.0, pow(mag, 2.5));
+			float temp = hash13(vec3(cell, face + 11.0));
+			vec3 tint = mix(vec3(1.0, 0.82, 0.68), vec3(0.78, 0.86, 1.0), temp);
+
+			// Scintillation - brightness only, so nothing appears to move.
+			float twinkle = 0.85 + 0.15 * sin(TIME * star_twinkle_speed + rnd * 100.0);
+
+			acc += tint * (core * area_comp + glow) * brightness * twinkle;
+		}
+	}
+	return acc * star_brightness;
 }
 
 void sky() {
@@ -159,7 +209,6 @@ void sky() {
 		// Faint galactic band: raises star density along one great circle.
 		float band = exp(-pow(dot(dir, normalize(milky_way_axis)) / milky_way_width, 2.0));
 		vec3 stars = star_field(dir, band * milky_way_strength * 2.0);
-		// Diffuse glow of unresolved stars in the band.
 		// Clumpy structure + dark dust rifts, so it reads as a galaxy rather
 		// than a smooth beam of light.
 		float clump = fbm(dir * 5.5);
