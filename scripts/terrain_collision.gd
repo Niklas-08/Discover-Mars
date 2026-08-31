@@ -14,8 +14,11 @@ extends StaticBody3D
 
 ## Material applied to the mesh (leave empty to keep the imported one).
 @export var terrain_material: Material
+const TERRAIN_MATERIAL_PATH := "res://assets/materials/mars_regolith.tres"
 
 func _ready() -> void:
+	if terrain_material == null:
+		terrain_material = load(TERRAIN_MATERIAL_PATH)
 	var mi := get_node_or_null(mesh_path) as MeshInstance3D
 	if mi == null:
 		push_error("TerrainCollision: MeshInstance3D not found at %s" % mesh_path)

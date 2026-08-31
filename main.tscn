@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://cy3mxl20a81hn" path="res://scripts/interaction_hud.gd" id="6_hud"]
 [ext_resource type="Material" uid="uid://dmarsskymat01" path="res://assets/materials/mars_sky.tres" id="7_sky"]
 [ext_resource type="Script" uid="uid://cs7183x8husgo" path="res://scripts/day_night_cycle.gd" id="8_cycle"]
+[ext_resource type="PackedScene" uid="uid://b43tygk1upxav" path="res://assets/models/Mars/Mars - Pahrump Hills 1.glb" id="9_ph1"]
+[ext_resource type="PackedScene" uid="uid://cuf4pab00tl6j" path="res://assets/models/Mars/Mars - Pahrump Hills 2.glb" id="10_ph2"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
 sky_material = ExtResource("7_sky")
@@ -49,6 +51,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.9999995, 0)
 [node name="TerrainBody" type="StaticBody3D" parent="." unique_id=1627455417]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 script = ExtResource("3_h2yge")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="PahrumpHills1" parent="." unique_id=1253808615 instance=ExtResource("9_ph1")]
+transform = Transform3D(-0.5703565, 4.9862148e-08, 2.9720156e-15, 0, -3.3995896e-08, 0.5703565, 4.9862148e-08, 0.5703565, 3.3995896e-08, 0.69999105, -16.040945, -302.6)
+
+[node name="PahrumpHills1Body" type="StaticBody3D" parent="." unique_id=1095793403]
+transform = Transform3D(-0.5703565, 4.9862148e-08, 2.9720156e-15, 0, -3.3995896e-08, 0.5703565, 4.9862148e-08, 0.5703565, 3.3995896e-08, 0.69999105, -16.040945, -302.6)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../PahrumpHills1/empty_2")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="PahrumpHills2" parent="." unique_id=741229263 instance=ExtResource("10_ph2")]
+transform = Transform3D(-0.5703565, -4.9862148e-08, -2.9720156e-15, 0, -3.3995896e-08, 0.5703565, -4.9862148e-08, 0.5703565, 3.3995896e-08, 0.5999876, -7.281916, -604.9)
+
+[node name="PahrumpHills2Body" type="StaticBody3D" parent="." unique_id=1870778005]
+transform = Transform3D(-0.5703565, -4.9862148e-08, -2.9720156e-15, 0, -3.3995896e-08, 0.5703565, -4.9862148e-08, 0.5703565, 3.3995896e-08, 0.5999876, -7.281916, -604.9)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../PahrumpHills2/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
 [node name="ExplorationVehicle" parent="." unique_id=706117106 groups=["rover"] instance=ExtResource("5_rover")]
