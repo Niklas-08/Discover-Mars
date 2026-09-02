@@ -69,6 +69,9 @@ var can_enter_rover: bool = false
 var _rover_toggle_cooldown: float = 0.0
 @onready var hud: CanvasLayer = get_tree().get_first_node_in_group("interaction_hud")
 
+## Kennung, unter der dieser Controller seinen Hinweis im InteractionHUD fuehrt.
+const ROVER_PROMPT_SOURCE := &"rover"
+
 func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.fov = fov
@@ -113,6 +116,10 @@ func _input(event):
 
 	# Rover Ein-/Aussteigen: nur wenn nah genug dran
 	if event.is_action_pressed("interact") and can_enter_rover and _rover_toggle_cooldown <= 0.0:
+		# Steht der Spieler gleichzeitig an einem Missionsobjekt, gehoert [F]
+		# dem Objekt: das HUD zeigt dann dessen hoeher priorisierten Hinweis.
+		if hud and hud.has_method("get_top_source") and hud.get_top_source() != ROVER_PROMPT_SOURCE:
+			return
 		_enter_rover()
 
 func _physics_process(delta):
@@ -252,7 +259,7 @@ func _update_rover_prompt():
 	if in_rover:
 		can_enter_rover = false
 		if hud:
-			hud.show_prompt("[F]  Rover verlassen")
+			hud.request_prompt(ROVER_PROMPT_SOURCE, "[F]  Rover verlassen", 0)
 		return
 
 	can_enter_rover = false
@@ -262,9 +269,9 @@ func _update_rover_prompt():
 
 	if hud:
 		if can_enter_rover:
-			hud.show_prompt("[F]  Rover betreten")
+			hud.request_prompt(ROVER_PROMPT_SOURCE, "[F]  Rover betreten", 0)
 		else:
-			hud.hide_prompt()
+			hud.clear_prompt(ROVER_PROMPT_SOURCE)
 
 func _enter_rover():
 	if rover == null or not is_instance_valid(rover):

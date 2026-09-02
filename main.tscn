@@ -10,6 +10,12 @@
 [ext_resource type="Script" uid="uid://cs7183x8husgo" path="res://scripts/day_night_cycle.gd" id="8_cycle"]
 [ext_resource type="PackedScene" uid="uid://b43tygk1upxav" path="res://assets/models/Mars/Mars - Pahrump Hills 1.glb" id="9_ph1"]
 [ext_resource type="PackedScene" uid="uid://cuf4pab00tl6j" path="res://assets/models/Mars/Mars - Pahrump Hills 2.glb" id="10_ph2"]
+[ext_resource type="Script" uid="uid://c6gaxpmyocjka" path="res://scripts/missions/mission_director.gd" id="11_2cqfq"]
+[ext_resource type="Script" uid="uid://bxrjp14x0idpm" path="res://scripts/ui/mission_hud.gd" id="12_yaehf"]
+[ext_resource type="Script" uid="uid://dy55bu4icufqa" path="res://scripts/missions/mission_signal_trigger.gd" id="13_074og"]
+[ext_resource type="Script" uid="uid://wgyqp3g5vd1j" path="res://scripts/missions/mission_waypoint.gd" id="14_cegan"]
+[ext_resource type="PackedScene" uid="uid://bwvtgwartxt0g" path="res://assets/models/rocks/RockB.tscn" id="15_82xsv"]
+[ext_resource type="Script" uid="uid://dspqxl0705dcb" path="res://scripts/missions/mission_interactable.gd" id="16_getpj"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
 sky_material = ExtResource("7_sky")
@@ -22,10 +28,8 @@ ambient_light_energy = 0.55
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="LabelSettings" id="LabelSettings_prompt"]
-font_size = 26
-outline_size = 8
-outline_color = Color(0, 0, 0, 0.7)
+[sub_resource type="SphereShape3D" id="SphereShape3D_d13ii"]
+radius = 4.5
 
 [node name="main" type="Node3D" unique_id=975692537]
 
@@ -72,27 +76,67 @@ mesh_path = NodePath("../PahrumpHills2/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
 [node name="ExplorationVehicle" parent="." unique_id=706117106 groups=["rover"] instance=ExtResource("5_rover")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -3.1, -6)
-max_engine_force = 20000.0
-max_reverse_force = 10000.0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -2.8, -6)
 
 [node name="InteractionHUD" type="CanvasLayer" parent="." unique_id=918595 groups=["interaction_hud"]]
 layer = 10
 script = ExtResource("6_hud")
 
-[node name="Prompt" type="Label" parent="InteractionHUD" unique_id=1253073681]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -220.0
-offset_top = -110.0
-offset_right = 220.0
-offset_bottom = -60.0
-grow_horizontal = 2
-grow_vertical = 0
-text = "[F]  Rover betreten"
-label_settings = SubResource("LabelSettings_prompt")
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="MissionDirector" type="Node" parent="." unique_id=1967444186]
+script = ExtResource("11_2cqfq")
+
+[node name="MissionHUD" type="CanvasLayer" parent="." unique_id=955103266]
+layer = 9
+script = ExtResource("12_yaehf")
+
+[node name="MissionWorld" type="Node3D" parent="." unique_id=1678258888]
+
+[node name="BoardRoverTrigger" type="Node" parent="MissionWorld" unique_id=1733391774]
+script = ExtResource("13_074og")
+objective_id = &"board_rover"
+source_group = &"rover"
+signal_name = &"driver_boarded"
+one_shot = true
+
+[node name="WP_BoardRover" type="Node3D" parent="MissionWorld" unique_id=203357141]
+script = ExtResource("14_cegan")
+objective_id = &"board_rover"
+follow_group = &"rover"
+offset = Vector3(0, 3.2, 0)
+snap_to_ground = false
+create_arrival_area = false
+beacon_height = 16.0
+beacon_radius = 0.8
+ring_radius = 3.0
+
+[node name="WP_Pahrump" type="Node3D" parent="MissionWorld" unique_id=2048757483]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 20, -292)
+script = ExtResource("14_cegan")
+objective_id = &"drive_to_pahrump"
+offset = Vector3(0, 2, 0)
+beacon_height = 70.0
+beacon_radius = 1.4
+ring_radius = 6.0
+
+[node name="SampleSite" type="Node3D" parent="MissionWorld" unique_id=998251753]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 20, -300)
+script = ExtResource("14_cegan")
+objective_id = &"collect_sample"
+offset = Vector3(0, 1.6, 0)
+create_arrival_area = false
+beacon_height = 26.0
+beacon_radius = 0.7
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="SampleRock" parent="MissionWorld/SampleSite" unique_id=261777392 instance=ExtResource("15_82xsv")]
+transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 0, 0, 0)
+
+[node name="SampleTrigger" type="Area3D" parent="MissionWorld/SampleSite" unique_id=706725867]
+script = ExtResource("16_getpj")
+objective_id = &"collect_sample"
+prompt_text = "[F]  Gesteinsprobe entnehmen"
+visual_path = NodePath("../SampleRock")
+
+[node name="Shape" type="CollisionShape3D" parent="MissionWorld/SampleSite/SampleTrigger" unique_id=267836760]
+shape = SubResource("SphereShape3D_d13ii")

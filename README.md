@@ -25,6 +25,8 @@ This project is currently a prototype and is under active development. Its prese
 - [x] A configurable Mars day/night cycle
 - [x] Dynamic sunlight, sky, and ambient lighting
 - [x] Optional flight mode for development and exploration
+- [x] A mission system with an objective tracker and waypoint markers
+- [x] The first rover mission, `MSL-01 Pahrump Hills`
 
 <div align="center">
   <img src="Exploration_Vehicle.png" alt="Exploration vehicle on the Martian surface" width="800" style="border-radius: 12px;">
@@ -39,9 +41,9 @@ This project is currently a prototype and is under active development. Its prese
 
 Future missions will place the player in the role of a rover science team. Planned activities include:
 
-- [ ] Navigating to scientifically interesting locations
+- [x] Navigating to scientifically interesting locations
 - [ ] Photographing and documenting geological formations
-- [ ] Collecting and comparing rock or soil samples
+- [x] Collecting and comparing rock or soil samples
 - [ ] Analysing simulated instrument data
 - [ ] Identifying minerals, signs of ancient water, and possible biosignatures
 - [ ] Making evidence-based decisions from incomplete data
@@ -60,6 +62,48 @@ Interactive panels will present accessible explanations supported by images, dia
 - [ ] The difference between confirmed evidence, scientific interpretation, and open questions
 
 Scientific material should reflect the current state of research, cite reliable sources, and clearly communicate uncertainty. The project will not present evidence of habitability as proof that life has been discovered.
+
+## Mission System
+
+The mission tracker appears in the top-right corner and lists the objectives of the
+active mission. Each objective moves through three states: pending, active, and
+complete. The active objective also places a waypoint in the world — a light beacon
+at the target plus a screen marker showing direction and remaining distance. When the
+target leaves the field of view, the marker becomes an arrow pinned to the edge of the
+screen. The marker follows whichever camera is currently active, so it keeps working
+when you switch between walking and driving.
+
+In-game mission text is written in German, matching the existing interaction prompts.
+
+### The first mission
+
+`MSL-01 Pahrump Hills` is modelled on Curiosity's real Pahrump Hills Walkabout. The
+rover reached the outcrop at the base of Mount Sharp around Sol 753 (September 2014)
+and drilled the "Confidence Hills" target. The rock belongs to the Murray formation
+and is interpreted as fine-grained mudstone deposited in a long-lived lake in Gale
+Crater. The mission has three objectives: board the exploration vehicle, drive to the
+outcrop roughly 300 metres away, and collect a rock sample on foot.
+
+Sources: Grotzinger et al. (2015), *Deposition, exhumation, and paleoclimate of an
+ancient lake deposit, Gale crater, Mars*, Science 350 (6257); NASA/JPL-Caltech MSL
+mission updates.
+
+### Adding a mission
+
+Missions are plain Godot `Resource` types, so no scene editing is required to define
+one. Build a `Mission` and its `MissionObjective` list in `scripts/missions/mission_library.gd`,
+then place a `MissionWaypoint` in the scene for each objective that needs a target.
+Objectives are completed by calling `MissionManager.report(objective_id)`. Three
+ready-made nodes cover the common cases:
+
+| Node | Purpose |
+| --- | --- |
+| `mission_waypoint.gd` | Marks a location, draws the beacon, and reports arrival |
+| `mission_interactable.gd` | Reports when the player presses `F` at an object |
+| `mission_signal_trigger.gd` | Reports when any node emits a given signal |
+
+Waypoints drop themselves onto the terrain with a downward raycast at startup, so only
+the X and Z coordinates need to be authored.
 
 ## Controls
 
@@ -95,14 +139,23 @@ The main scene is `main.tscn`.
 
 ```text
 .
-|-- assets/             # Models, textures, materials, and shaders
-|-- scripts/            # Gameplay and environment scripts
+|-- assets/
+|   |-- materials/      # Materials and shaders (terrain, sky, mission beacon)
+|   |-- models/         # 3D models and textures
+|   `-- ui/icons/       # Mission interface icons (SVG)
+|-- scripts/
+|   |-- missions/       # Mission data, manager, and world trigger nodes
+|   |-- ui/             # Mission tracker, waypoint marker, and styling
+|   `-- ...             # Rover, terrain, and environment scripts
 |-- main.tscn           # Main exploration scene
 |-- player.tscn         # Player scene
 |-- exploration_vehicle.tscn
 |-- project.godot       # Godot project configuration
 `-- texture/            # Additional source textures
 ```
+
+`MissionManager` is registered as an autoload singleton in `project.godot` and holds
+the mission state for the whole project.
 
 ## Contributing
 
