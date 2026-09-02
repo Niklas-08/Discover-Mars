@@ -75,6 +75,13 @@ when you switch between walking and driving.
 
 In-game mission text is written in German, matching the existing interaction prompts.
 
+<div align="center">
+  <img src="Rover_Marker_Animation.gif" alt="Animated waypoint marker and mission tracker" width="800" style="border-radius: 12px;">
+  <div style="display: inline-block; margin-top: 6px; padding: 6px 14px; border-radius: 6px; background-color: #a6a6a7; color: #000000;">
+    <em>Animated waypoint marker and mission tracker</em>
+  </div>
+</div>
+
 ### The first mission
 
 `MSL-01 Pahrump Hills` is modelled on Curiosity's real Pahrump Hills Walkabout. The
