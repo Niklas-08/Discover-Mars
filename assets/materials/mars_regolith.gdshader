@@ -32,9 +32,53 @@ uniform float roughness_floor : hint_range(0.85, 1.0) = 0.97;
 varying vec3 world_pos;
 varying vec3 world_normal;
 
+// --- Tile seam blending ---------------------------------------------------
+// Per-tile height correction produced by tools/blend_seams.js and applied by
+// terrain_collision.gd (which also applies the identical correction to the
+// collision mesh). Off by default so the material is unchanged elsewhere.
+uniform bool seam_enabled = false;
+uniform sampler2D seam_delta : filter_linear, repeat_disable;
+/// (min_x, min_z, size_x, size_z) of the correction grid in world space.
+uniform vec4 seam_rect = vec4(0.0, 0.0, 1.0, 1.0);
+/// Local edge expansion (scale_x, scale_y, centre_x, centre_y) in the mesh's
+/// own plane - grows the tile a few metres so neighbours always overlap.
+uniform vec4 seam_expand = vec4(1.0, 1.0, 0.0, 0.0);
+
 void vertex() {
+    if (seam_enabled) {
+        VERTEX.xy = seam_expand.zw + (VERTEX.xy - seam_expand.zw) * seam_expand.xy;
+    }
     world_pos    = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
     world_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+
+    if (seam_enabled) {
+        vec2 uv = (world_pos.xz - seam_rect.xy) / seam_rect.zw;
+        float d = textureLod(seam_delta, uv, 0.0).r;
+        {
+            // Move the vertex straight up/down in WORLD space, then express
+            // that offset in the mesh's local space (handles the -90 deg
+            // rotation, scale, tilt and mirroring of each tile).
+            mat3 to_local = inverse(mat3(MODEL_MATRIX));
+            VERTEX += to_local * vec3(0.0, d, 0.0);
+            world_pos.y += d;
+
+            // Tilt the normal by the slope of the correction so lighting and
+            // the dust/stone slope logic follow the blended shape.
+            // Slope sampled over +-2 cells: a 1-cell difference gives each 2 m
+            // cell its own flat shade, which shows up as a blocky pattern.
+            vec2 texel = 2.0 / vec2(textureSize(seam_delta, 0));
+            float cell_x = seam_rect.z * texel.x;
+            float cell_z = seam_rect.w * texel.y;
+            float gx = (textureLod(seam_delta, uv + vec2(texel.x, 0.0), 0.0).r
+                      - textureLod(seam_delta, uv - vec2(texel.x, 0.0), 0.0).r) / (2.0 * cell_x);
+            float gz = (textureLod(seam_delta, uv + vec2(0.0, texel.y), 0.0).r
+                      - textureLod(seam_delta, uv - vec2(0.0, texel.y), 0.0).r) / (2.0 * cell_z);
+            vec3 n = world_normal;
+            n = normalize(n + max(n.y, 0.0) * vec3(-gx, 0.0, -gz));
+            world_normal = n;
+            NORMAL = normalize(to_local * n);
+        }
+    }
 }
 
 void fragment() {
