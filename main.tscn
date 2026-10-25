@@ -11,9 +11,13 @@
 [ext_resource type="PackedScene" uid="uid://b43tygk1upxav" path="res://assets/models/Mars/Mars - Pahrump Hills 1.glb" id="9_ph1"]
 [ext_resource type="PackedScene" uid="uid://cuf4pab00tl6j" path="res://assets/models/Mars/Mars - Pahrump Hills 2.glb" id="10_ph2"]
 [ext_resource type="Script" uid="uid://c6gaxpmyocjka" path="res://scripts/missions/mission_director.gd" id="11_2cqfq"]
+[ext_resource type="PackedScene" uid="uid://cwuvdhc5a1o36" path="res://assets/models/Mars/Mars - Spirit Rover Path.glb" id="11_srp"]
+[ext_resource type="PackedScene" uid="uid://f5ue4mg4lp3j" path="res://assets/models/Mars/Mars - Valles Marineris (B).glb" id="12_vmb"]
 [ext_resource type="Script" uid="uid://bxrjp14x0idpm" path="res://scripts/ui/mission_hud.gd" id="12_yaehf"]
 [ext_resource type="Script" uid="uid://dy55bu4icufqa" path="res://scripts/missions/mission_signal_trigger.gd" id="13_074og"]
+[ext_resource type="PackedScene" uid="uid://b7t52ho4xrryv" path="res://assets/models/Mars/Mars - Victoria Crater.glb" id="13_vic"]
 [ext_resource type="Script" uid="uid://wgyqp3g5vd1j" path="res://scripts/missions/mission_waypoint.gd" id="14_cegan"]
+[ext_resource type="PackedScene" uid="uid://dtvqvf7sh6ayw" path="res://assets/models/Mars/Mars - Valles Marineris (C).glb" id="14_vmc"]
 [ext_resource type="PackedScene" uid="uid://bwvtgwartxt0g" path="res://assets/models/rocks/RockB.tscn" id="15_82xsv"]
 [ext_resource type="Script" uid="uid://dspqxl0705dcb" path="res://scripts/missions/mission_interactable.gd" id="16_getpj"]
 
@@ -58,21 +62,102 @@ script = ExtResource("3_h2yge")
 terrain_material = ExtResource("4_1bvp3")
 
 [node name="PahrumpHills1" parent="." unique_id=1253808615 instance=ExtResource("9_ph1")]
-transform = Transform3D(-0.5703565, 4.9862148e-08, 2.9720156e-15, 0, -3.3995896e-08, 0.5703565, 4.9862148e-08, 0.5703565, 3.3995896e-08, 0.69999105, -16.040945, -302.6)
+transform = Transform3D(0.00036651274, -0.57028705, 0.008884073, 0.03077977, 0.008890902, 0.56945604, -0.5695252, 0.00011350241, 0.030781738, -5.200009, -11.040945, -302.6)
 
 [node name="PahrumpHills1Body" type="StaticBody3D" parent="." unique_id=1095793403]
-transform = Transform3D(-0.5703565, 4.9862148e-08, 2.9720156e-15, 0, -3.3995896e-08, 0.5703565, 4.9862148e-08, 0.5703565, 3.3995896e-08, 0.69999105, -16.040945, -302.6)
+transform = Transform3D(0.00036651274, -0.57028705, 0.008884073, 0.03077977, 0.008890902, 0.56945604, -0.5695252, 0.00011350241, 0.030781738, -5.200009, -11.040945, -302.6)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills1/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
+[node name="PahrumpHills1_1" parent="." unique_id=815352416 instance=ExtResource("9_ph1")]
+transform = Transform3D(-0.56919235, -0.0019105, -0.03637128, -0.03630561, -0.015620437, 0.5689855, -0.0029020202, 0.5701391, 0.015466959, 296.2109, 4.0082216, -299.04733)
+
+[node name="PahrumpHills1_1Body" type="StaticBody3D" parent="." unique_id=461686596]
+transform = Transform3D(-0.56919235, -0.0019105, -0.03637128, -0.03630561, -0.015620437, 0.5689855, -0.0029020202, 0.5701391, 0.015466959, 296.2109, 4.0082216, -299.04733)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../PahrumpHills1_1/empty_2")
+terrain_material = ExtResource("4_1bvp3")
+
 [node name="PahrumpHills2" parent="." unique_id=741229263 instance=ExtResource("10_ph2")]
-transform = Transform3D(-0.5703565, -4.9862148e-08, -2.9720156e-15, 0, -3.3995896e-08, 0.5703565, -4.9862148e-08, 0.5703565, 3.3995896e-08, 0.5999876, -7.281916, -604.9)
+transform = Transform3D(-0.5699452, 0.0026391312, -0.021494716, -0.021656126, -0.069458805, 0.5656969, -8.612144e-08, 0.56610507, 0.069508925, 0.5999876, 16.213345, -556.4)
 
 [node name="PahrumpHills2Body" type="StaticBody3D" parent="." unique_id=1870778005]
-transform = Transform3D(-0.5703565, -4.9862148e-08, -2.9720156e-15, 0, -3.3995896e-08, 0.5703565, -4.9862148e-08, 0.5703565, 3.3995896e-08, 0.5999876, -7.281916, -604.9)
+transform = Transform3D(-0.5699452, 0.0026391312, -0.021494716, -0.021656126, -0.069458805, 0.5656969, -8.612144e-08, 0.56610507, 0.069508925, 0.5999876, 16.213345, -556.4)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills2/empty_2")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="PahrumpHills2_1" parent="." unique_id=1180917370 instance=ExtResource("10_ph2")]
+transform = Transform3D(0.5703565, 8.5479506e-08, 1.0495563e-08, 0, -0.06950897, 0.5661052, -8.612144e-08, 0.5661052, 0.06950897, -301.50003, 10.618084, -556.4)
+
+[node name="PahrumpHills2_1Body" type="StaticBody3D" parent="." unique_id=1297506234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -301.50003, 10.618084, -556.4)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../PahrumpHills2_1/empty_2")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="PahrumpHills2_2" parent="." unique_id=1940462498 instance=ExtResource("10_ph2")]
+transform = Transform3D(0.56958956, 0.003603442, -0.029346978, 0.029567378, -0.069415495, 0.565344, -8.612144e-08, 0.5661052, 0.06950896, 300.59732, 29.168228, -556.4)
+
+[node name="PahrumpHills2_2Body" type="StaticBody3D" parent="." unique_id=1640311193]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 300.59732, 29.168228, -556.4)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../PahrumpHills2_2/empty_2")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="SpiritRoverPath" parent="." unique_id=1798282688 instance=ExtResource("11_srp")]
+transform = Transform3D(1, 0, 0, 0, -0.034899462, 0.99939084, 0, -0.99939084, -0.034899462, -304.1, -14.100306, 1.847744e-05)
+
+[node name="SpiritRoverPathBody" type="StaticBody3D" parent="." unique_id=545162037]
+transform = Transform3D(1, 0, 0, 0, -0.034899462, 0.99939084, 0, -0.99939084, -0.034899462, -304.1, -14.100306, 1.847744e-05)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../SpiritRoverPath")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="SpiritRoverPath2" parent="." unique_id=1285573952 instance=ExtResource("11_srp")]
+transform = Transform3D(0.99713176, 0.0074973423, -0.07531254, 0.07568481, -0.09877596, 0.9922275, 3.3374006e-10, -0.99508154, -0.09906007, 300.80002, 14.199696, 1.6000185)
+
+[node name="SpiritRoverPathBody2" type="StaticBody3D" parent="." unique_id=394968866]
+transform = Transform3D(0.99713176, 0.0074973423, -0.07531254, 0.07568481, -0.09877596, 0.9922275, 3.3374006e-10, -0.99508154, -0.09906007, 300.80002, 14.199696, 1.6000185)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../SpiritRoverPath2")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="VallesMarinerisB" parent="." unique_id=601897664 instance=ExtResource("12_vmb")]
+transform = Transform3D(1, 0, 0, 0, 0.052335974, 0.9986295, 0, -0.9986295, 0.052335974, -302.30002, -13.509363, -303.5)
+
+[node name="VallesMarinerisBBody" type="StaticBody3D" parent="." unique_id=688921927]
+transform = Transform3D(1, 0, 0, 0, 0.052335974, 0.9986295, 0, -0.9986295, 0.052335974, -302.30002, -13.509363, -303.5)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../VallesMarinerisB")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="VictoriaCrater" parent="." unique_id=1863361913 instance=ExtResource("13_vic")]
+transform = Transform3D(0.9966783, 8.143907e-09, -0.08143907, 0.08143907, -9.966783e-08, 0.9966783, 0, -1, -1e-07, 282.9, 16.69994, 303.30002)
+
+[node name="VictoriaCraterBody" type="StaticBody3D" parent="." unique_id=72316329]
+transform = Transform3D(0.9966783, 8.143907e-09, -0.08143907, 0.08143907, -9.966783e-08, 0.9966783, 0, -1, -1e-07, 282.9, 16.69994, 303.30002)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../VictoriaCrater")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="VallesMarinerisC" parent="." unique_id=2108569214 instance=ExtResource("14_vmc")]
+transform = Transform3D(-3.8845603, 3.3959904e-07, 1.7484556e-14, 0, -2e-07, 3.8845603, 3.3959904e-07, 3.8845603, 2e-07, -303.6, -21.68786, 302.7)
+
+[node name="VallesMarinerisCBody" type="StaticBody3D" parent="." unique_id=1629670480]
+transform = Transform3D(-3.8845603, 3.3959904e-07, 1.7484556e-14, 0, -2e-07, 3.8845603, 3.3959904e-07, 3.8845603, 2e-07, -303.6, -21.68786, 302.7)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../VallesMarinerisC")
+terrain_material = ExtResource("4_1bvp3")
+
+[node name="VallesMarinerisC2" parent="." unique_id=1730561224 instance=ExtResource("14_vmc")]
+transform = Transform3D(3.8650005, -2.2869166e-07, -0.389329, 0.389329, -1.9369536e-07, 3.8650005, 2.4695325e-07, 3.8845603, 1.6979952e-07, -0.099993944, -5.78786, 302.7)
+
+[node name="VallesMarinerisCBody2" type="StaticBody3D" parent="." unique_id=72652339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.099993944, -5.78786, 302.7)
+script = ExtResource("3_h2yge")
+mesh_path = NodePath("../VallesMarinerisC2")
 terrain_material = ExtResource("4_1bvp3")
 
 [node name="ExplorationVehicle" parent="." unique_id=706117106 groups=["rover"] instance=ExtResource("5_rover")]
