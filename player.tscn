@@ -1,25 +1,33 @@
-[gd_scene load_steps=4 format=3 uid="uid://c0eu2hksq1ka7"]
+[gd_scene format=3 uid="uid://c0eu2hksq1ka7"]
 
-[ext_resource type="Script" path="res://CharacterBody3D.gd" id="1_m048o"]
+[ext_resource type="Script" uid="uid://bqtu25to2ny4e" path="res://CharacterBody3D.gd" id="1_m048o"]
+[ext_resource type="Script" uid="uid://bjmrpudfruaf5" path="res://flashlight.gd" id="2_onrkg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_obu64"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_f7a07"]
 
-[node name="Player" type="CharacterBody3D"]
+[node name="Player" type="CharacterBody3D" unique_id=2123460671]
 script = ExtResource("1_m048o")
 gravity = 3.73
 
-[node name="Head" type="Node3D" parent="."]
+[node name="Head" type="Node3D" parent="." unique_id=1639489775]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Head"]
+[node name="Camera3D" type="Camera3D" parent="Head" unique_id=997193968]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="Flashlight" type="SpotLight3D" parent="Head" unique_id=1974973294]
+light_energy = 5.0
+distance_fade_enabled = true
+spot_range = 14.5
+spot_angle = 33.198956
+script = ExtResource("2_onrkg")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=301559751]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_obu64")
 
-[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
+[node name="CSGMesh3D" type="CSGMesh3D" parent="." unique_id=1607627988]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 mesh = SubResource("CapsuleMesh_f7a07")

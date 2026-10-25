@@ -2,12 +2,45 @@
 
 [ext_resource type="PackedScene" uid="uid://cff4ie878tjmj" path="res://assets/models/Rover/Space Exploration Vehicle.glb" id="1_model"]
 [ext_resource type="Script" uid="uid://b7sky677mdhuh" path="res://scripts/rover.gd" id="2_script"]
+[ext_resource type="Script" uid="uid://drnywf3y7x2pa" path="res://exploration_vehicle_light.gd" id="3_jbi5f"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_chassis"]
 size = Vector3(3.2, 1.6, 4.6)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lower"]
 size = Vector3(2.6, 0.7, 3.2)
+
+[sub_resource type="SphereMesh" id="SphereMesh_h2me6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jbi5f"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b7nr2"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_vama1"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e4t4p"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rvfbr"]
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 16.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4dejw"]
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 16.0
 
 [node name="Exploration_Vehicle" type="VehicleBody3D" unique_id=6315772]
 mass = 900.0
@@ -80,3 +113,66 @@ transform = Transform3D(-1, 9.383729e-09, -5.9192914e-08, -1.6511448e-08, 0.9063
 
 [node name="EnterPoint" type="Marker3D" parent="." unique_id=1518192130]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, -1, 0)
+
+[node name="exploration_vehicle_light" type="Node3D" parent="." unique_id=676633194]
+script = ExtResource("3_jbi5f")
+
+[node name="frontL" type="SpotLight3D" parent="exploration_vehicle_light" unique_id=1904897469]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0.6, 0.8, 1.8)
+light_energy = 10.0
+distance_fade_enabled = true
+spot_range = 72.9
+spot_angle = 27.67841
+
+[node name="FL_light_bulb1" type="MeshInstance3D" parent="exploration_vehicle_light/frontL" unique_id=262541503]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.099999875, 0.100000024, 0)
+mesh = SubResource("SphereMesh_h2me6")
+surface_material_override/0 = SubResource("StandardMaterial3D_jbi5f")
+
+[node name="FL_light_bulb2" type="MeshInstance3D" parent="exploration_vehicle_light/frontL" unique_id=1463339941]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.05, 0.1, 0.03)
+mesh = SubResource("SphereMesh_h2me6")
+surface_material_override/0 = SubResource("StandardMaterial3D_b7nr2")
+
+[node name="frontR" type="SpotLight3D" parent="exploration_vehicle_light" unique_id=2069296989]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, -0.6, 0.8, 1.8)
+light_energy = 10.0
+distance_fade_enabled = true
+spot_range = 73.5
+spot_angle = 27.782938
+
+[node name="FR_light_bulb1" type="MeshInstance3D" parent="exploration_vehicle_light/frontR" unique_id=30325602]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, -0.10000014, 0.100000024, 1.1920929e-07)
+mesh = SubResource("SphereMesh_h2me6")
+skeleton = NodePath("../../frontL")
+surface_material_override/0 = SubResource("StandardMaterial3D_vama1")
+
+[node name="FR_light_bulb2" type="MeshInstance3D" parent="exploration_vehicle_light/frontR" unique_id=1867092940]
+transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0.05000007, 0.100000024, 0.03000009)
+mesh = SubResource("SphereMesh_h2me6")
+skeleton = NodePath("../../frontL")
+surface_material_override/0 = SubResource("StandardMaterial3D_e4t4p")
+
+[node name="rearL" type="SpotLight3D" parent="exploration_vehicle_light" unique_id=1777422102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, -1.6, -2.8999999)
+light_color = Color(1, 0.08627451, 0.11372549, 1)
+distance_fade_enabled = true
+spot_range = 7.5
+
+[node name="RL_light_bulb1" type="MeshInstance3D" parent="exploration_vehicle_light/rearL" unique_id=124154260]
+transform = Transform3D(-0.1, 0, -8.742278e-09, 0, 0.1, 0, 8.742278e-09, 0, -0.1, -0.099999845, 0, 0.099999905)
+mesh = SubResource("SphereMesh_h2me6")
+skeleton = NodePath("../../frontL")
+surface_material_override/0 = SubResource("StandardMaterial3D_rvfbr")
+
+[node name="rearR" type="SpotLight3D" parent="exploration_vehicle_light" unique_id=1002707199]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, -1.6, -2.8999999)
+light_color = Color(1, 0.08627451, 0.11372549, 1)
+distance_fade_enabled = true
+spot_range = 7.4
+
+[node name="RR_light_bulb1" type="MeshInstance3D" parent="exploration_vehicle_light/rearR" unique_id=898813606]
+transform = Transform3D(-0.1, 0, -8.742278e-09, 0, 0.1, 0, 8.742278e-09, 0, -0.1, 1.1920929e-07, 0, 0.099999905)
+mesh = SubResource("SphereMesh_h2me6")
+skeleton = NodePath("../../frontL")
+surface_material_override/0 = SubResource("StandardMaterial3D_4dejw")
