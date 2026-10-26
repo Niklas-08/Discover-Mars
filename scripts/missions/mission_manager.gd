@@ -19,8 +19,20 @@ signal objective_progress_changed(objective: MissionObjective, current: int, req
 signal objective_completed(objective: MissionObjective)
 ## Das Ziel, auf das der Wegpunkt-Marker zeigen soll. null = kein Marker.
 signal tracked_objective_changed(objective: MissionObjective)
+## Mitgefuehrte Fracht hat sich geaendert (Speicherkarte, Proben).
+signal cargo_changed
+
+## Einfacher Frachtzustand statt eines Inventars. Schluessel -> Anzeigename.
+const CARGO_FLAGS := {
+	&"has_memory_card": "Speicherkarte",
+	&"has_rock_sample": "Gesteinsprobe",
+	&"has_soil_sample": "Bodenprobe",
+}
 
 var active_mission: Mission = null
+
+## flag -> bool (siehe CARGO_FLAGS)
+var _flags: Dictionary = {}
 
 ## objective_id -> int
 var _progress: Dictionary = {}
@@ -63,6 +75,28 @@ func reset() -> void:
 	_completed.clear()
 	_finished = false
 	tracked_objective_changed.emit(null)
+
+
+# --- Fracht ---------------------------------------------------------------
+
+func set_flag(flag: StringName, value: bool) -> void:
+	if bool(_flags.get(flag, false)) == value:
+		return
+	_flags[flag] = value
+	cargo_changed.emit()
+
+
+func has_flag(flag: StringName) -> bool:
+	return bool(_flags.get(flag, false))
+
+
+## Anzeigenamen der aktuell mitgefuehrten Fracht, z. B. ["Speicherkarte"].
+func get_cargo_names() -> PackedStringArray:
+	var out := PackedStringArray()
+	for flag in CARGO_FLAGS:
+		if has_flag(flag):
+			out.append(CARGO_FLAGS[flag])
+	return out
 
 
 # --- Fortschrittsmeldung --------------------------------------------------

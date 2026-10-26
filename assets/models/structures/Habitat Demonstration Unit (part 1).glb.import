@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cdsiomerqnxqs"
-valid=false
+uid="uid://dvy54g2vqdd44"
+path="res://.godot/imported/Habitat Demonstration Unit (part 1).glb-3b52e53071e0d9416b3f13bb92e9c2bf.scn"
 
 [deps]
 
 source_file="res://assets/models/structures/Habitat Demonstration Unit (part 1).glb"
+dest_files=["res://.godot/imported/Habitat Demonstration Unit (part 1).glb-3b52e53071e0d9416b3f13bb92e9c2bf.scn"]
 
 [params]
 

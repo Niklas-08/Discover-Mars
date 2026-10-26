@@ -6,11 +6,16 @@ extends RefCounted
 ## in Git lesbar und diffbar. Da Mission und MissionObjective echte Resource-
 ## Klassen sind, koennen spaetere Missionen bei Bedarf trotzdem als .tres im
 ## Inspector angelegt und hier nur noch geladen werden.
+##
+## Die Weltseite jeder Mission (Wegpunkte, Interaktionen, Probenzonen) liegt
+## unter /MissionWorld in main.tscn und ist ueber die Ziel-IDs verknuepft.
+## Nebenwirkungen einzelner Ziele (Fracht, Einblendungen) uebernimmt
+## mission_story.gd, den Kampagnenablauf mission_director.gd.
 
 
 ## Alle Missionen in Kampagnenreihenfolge.
 static func get_all() -> Array[Mission]:
-	return [msl_01_pahrump_hills()]
+	return [msn_01_signal_aus_dem_orbit(), msn_02_see_im_gale_krater(), msn_03_spuren_im_gestein()]
 
 
 ## Liefert die Mission mit dieser ID oder null.
@@ -23,56 +28,128 @@ static func get_by_id(mission_id: StringName) -> Mission:
 
 ## Die erste Mission der Kampagne.
 static func get_first() -> Mission:
-	return msl_01_pahrump_hills()
+	return get_all()[0]
 
 
-## MSL-01 -- Pahrump Hills.
-##
-## Nachempfunden dem realen "Pahrump Hills Walkabout" des Rovers Curiosity
-## (Mars Science Laboratory). Curiosity erreichte den Aufschluss um Sol 753
-## (September 2014) am Fuss des Mount Sharp (Aeolis Mons) und bohrte dort das
-## Ziel "Confidence Hills" an. Das Gestein gehoert zur Murray-Formation und
-## wird als feinkoerniger Schlammstein gedeutet -- abgelagert in einem
-## langlebigen See im Gale-Krater.
-##
-## Quellen:
-##   Grotzinger et al. (2015), "Deposition, exhumation, and paleoclimate of an
-##   ancient lake deposit, Gale crater, Mars", Science 350 (6257).
-##   NASA/JPL-Caltech, MSL Mission Updates, Sol 753-800.
-static func msl_01_pahrump_hills() -> Mission:
-	var mission := Mission.new()
-	mission.id = &"msl_01"
-	mission.codename = "MSL-01"
-	mission.title = "Pahrump Hills"
-	mission.briefing = "Erreiche mit dem Erkundungsfahrzeug den Aufschluss der Pahrump Hills am Fuss des Mount Sharp und entnimm eine Gesteinsprobe der untersten Schicht (Confidence Hills)."
-	mission.debrief = "Curiosity fand hier feinkoernigen Schlammstein - Ablagerungen eines antiken Sees im Gale-Krater."
-	mission.sequential = true
+## Die Mission nach dieser, oder null nach der letzten.
+static func get_next(mission_id: StringName) -> Mission:
+	var all := get_all()
+	for i in all.size() - 1:
+		if all[i].id == mission_id:
+			return all[i + 1]
+	return null
 
-	var board := MissionObjective.new()
-	board.id = &"board_rover"
-	board.title = "Erkundungsfahrzeug besteigen"
-	board.description = "Naehere dich dem Rover und steige mit [F] ein."
-	board.kind = MissionObjective.Kind.INTERACT
+
+# --- Bausteine ------------------------------------------------------------
+
+static func _objective(id: StringName, title: String, kind: MissionObjective.Kind,
+		description: String = "", arrival_radius: float = 12.0) -> MissionObjective:
+	var o := MissionObjective.new()
+	o.id = id
+	o.title = title
+	o.kind = kind
+	o.description = description
+	o.arrival_radius = arrival_radius
+	o.show_waypoint = true
+	return o
+
+
+# --- MSN-01 ---------------------------------------------------------------
+
+static func msn_01_signal_aus_dem_orbit() -> Mission:
+	var m := Mission.new()
+	m.id = &"msn_01"
+	m.codename = "MSN-01"
+	m.title = "Signal aus dem Orbit"
+	m.sequential = true
+	m.briefing = "Ein Orbiter ist auf dem Mars abgestürzt: MAVEN, eine Sonde, die untersucht hat, wie der Mars seine Atmosphäre verliert. Ihre Speicherkarte enthält möglicherweise wichtige Aufnahmen. Fahre mit dem Mars Exploration Vehicle zur Absturzstelle und birg die Speicherkarte."
+	m.debrief = "Mission abgeschlossen. Das Satellitenbild zeigt den Gale-Krater – dein nächstes Ziel."
+
+	var board := _objective(&"board_vehicle", "Steige in das Mars Exploration Vehicle",
+		MissionObjective.Kind.INTERACT, "Nähere dich dem Fahrzeug und steige mit [F] ein.", 6.0)
 	board.target_group = &"rover"
-	board.waypoint_offset = Vector3(0.0, 2.6, 0.0)
-	board.arrival_radius = 6.0
-	board.show_waypoint = true
 
-	var drive := MissionObjective.new()
-	drive.id = &"drive_to_pahrump"
-	drive.title = "Zum Aufschluss Pahrump Hills fahren"
-	drive.description = "Der Aufschluss liegt rund 300 Meter noerdlich der Landestelle."
-	drive.kind = MissionObjective.Kind.TRAVEL
-	drive.arrival_radius = 25.0
-	drive.show_waypoint = true
+	var reach := _objective(&"reach_maven", "Fahre zum abgestürzten Satelliten MAVEN",
+		MissionObjective.Kind.TRAVEL, "", 25.0)
+	reach.target_path = ^"/root/main/MAVEN"
 
-	var sample := MissionObjective.new()
-	sample.id = &"collect_sample"
-	sample.title = "Gesteinsprobe entnehmen"
-	sample.description = "Steige aus und entnimm mit [F] eine Probe des markierten Gesteins."
-	sample.kind = MissionObjective.Kind.COLLECT
-	sample.arrival_radius = 4.0
-	sample.show_waypoint = true
+	var card := _objective(&"retrieve_card", "Entnimm die Speicherkarte",
+		MissionObjective.Kind.INTERACT, "Steige aus und entnimm die Speicherkarte mit [F].")
+	card.target_path = ^"/root/main/MAVEN"
 
-	mission.objectives = [board, drive, sample]
-	return mission
+	var back := _objective(&"return_to_habitat", "Bringe die Speicherkarte zur Habitat Demonstration Unit",
+		MissionObjective.Kind.TRAVEL, "", 20.0)
+	back.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	var view := _objective(&"view_picture", "Sieh dir das Satellitenbild an",
+		MissionObjective.Kind.INTERACT, "Steige aus und öffne das Satellitenbild mit [F].")
+	view.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	m.objectives = [board, reach, card, back, view]
+	return m
+
+
+# --- MSN-02 ---------------------------------------------------------------
+
+static func msn_02_see_im_gale_krater() -> Mission:
+	var m := Mission.new()
+	m.id = &"msn_02"
+	m.codename = "MSN-02"
+	m.title = "Der See im Gale-Krater"
+	m.sequential = true
+	m.briefing = "Am Grund des Gale-Kraters lag vor Milliarden Jahren ein See. Steuere den Rover Perseverance (Taste R) in den Krater und entnimm eine Gesteinsprobe."
+	m.debrief = "Mission abgeschlossen. Der Gale-Krater war einst habitabel. Doch für Spuren von Leben braucht es weitere Hinweise."
+
+	var control := _objective(&"control_rover", "Übernimm die Steuerung von Perseverance [R]",
+		MissionObjective.Kind.INTERACT)
+	control.target_group = &"perseverance"
+
+	var reach := _objective(&"reach_gale", "Fahre zum Gale-Krater",
+		MissionObjective.Kind.TRAVEL, "", 20.0)
+	reach.target_path = ^"/root/main/Surface/MarsGaleCrater"
+
+	var sample := _objective(&"take_rock_sample", "Entnimm eine Gesteinsprobe",
+		MissionObjective.Kind.COLLECT, "Fahre an die markierte Stelle und entnimm die Probe mit [F].")
+	sample.target_group = &"perseverance"
+
+	var back := _objective(&"return_rock", "Bringe die Probe zur Habitat Demonstration Unit",
+		MissionObjective.Kind.TRAVEL, "", 20.0)
+	back.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	var analyze := _objective(&"analyze_rock", "Analysiere die Gesteinsprobe",
+		MissionObjective.Kind.SCAN, "Starte die Analyse mit [F].")
+	analyze.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	m.objectives = [control, reach, sample, back, analyze]
+	return m
+
+
+# --- MSN-03 ---------------------------------------------------------------
+
+static func msn_03_spuren_im_gestein() -> Mission:
+	var m := Mission.new()
+	m.id = &"msn_03"
+	m.codename = "MSN-03"
+	m.title = "Spuren im Gestein"
+	m.sequential = true
+	m.briefing = "Satelliten im Orbit haben in der Nähe ein Hügelgebiet entdeckt, in dem Sedimentgestein aus Ton und Schluff freiliegt. Steuere Perseverance zu den Pahrump Hills und nimm eine Bodenprobe."
+	m.debrief = ""   # Kein Debrief: direkt zum Abschlussbildschirm.
+
+	var reach := _objective(&"reach_pahrump", "Fahre zu den Pahrump Hills",
+		MissionObjective.Kind.TRAVEL, "", 20.0)
+	reach.target_path = ^"/root/main/Surface/PahrumpHills2"
+
+	var sample := _objective(&"take_soil_sample", "Entnimm eine Bodenprobe",
+		MissionObjective.Kind.COLLECT, "Fahre an die markierte Stelle und entnimm die Probe mit [F].")
+	sample.target_group = &"perseverance"
+
+	var back := _objective(&"return_soil", "Bringe die Probe zur Habitat Demonstration Unit",
+		MissionObjective.Kind.TRAVEL, "", 20.0)
+	back.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	var analyze := _objective(&"analyze_soil", "Analysiere die Bodenprobe",
+		MissionObjective.Kind.SCAN, "Starte die Analyse mit [F].")
+	analyze.target_path = ^"/root/main/HabitatDemonstrationUnit"
+
+	m.objectives = [reach, sample, back, analyze]
+	return m

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b8ijjh4sqvtks"]
 
-[ext_resource type="PackedScene" uid="uid://dnfo3tqa5d67w" path="res://assets/models/Mars/Mars - Gale Crater.glb" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://dnfo3tqa5d67w" path="res://assets/models/Mars/Mars - Surface.glb" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://c0eu2hksq1ka7" path="res://player.tscn" id="2_0xm2m"]
 [ext_resource type="Script" uid="uid://drykdg8guckek" path="res://scripts/terrain_collision.gd" id="3_h2yge"]
 [ext_resource type="Material" uid="uid://d31qbvn6l7ips" path="res://assets/materials/mars_regolith.tres" id="4_1bvp3"]
@@ -20,6 +20,17 @@
 [ext_resource type="PackedScene" uid="uid://dtvqvf7sh6ayw" path="res://assets/models/Mars/Mars - Valles Marineris (C).glb" id="14_vmc"]
 [ext_resource type="PackedScene" uid="uid://bwvtgwartxt0g" path="res://assets/models/rocks/RockB.tscn" id="15_82xsv"]
 [ext_resource type="Script" uid="uid://dspqxl0705dcb" path="res://scripts/missions/mission_interactable.gd" id="16_getpj"]
+[ext_resource type="Script" uid="uid://d0qboc6hp6n86" path="res://scripts/world_border.gd" id="20_border"]
+[ext_resource type="PackedScene" uid="uid://cm0r751h8pmyu" path="res://assets/models/Mars/Mars - Gale Crater.glb" id="21_gale"]
+[ext_resource type="PackedScene" uid="uid://dvy54g2vqdd44" path="res://assets/models/structures/Habitat Demonstration Unit (part 1).glb" id="30_hdu1"]
+[ext_resource type="PackedScene" uid="uid://ermj3c0vfvsu" path="res://assets/models/structures/Habitat Demonstration Unit (part 2).glb" id="31_hdu2"]
+[ext_resource type="Script" uid="uid://b0o2c4n2ba3xy" path="res://scripts/static_mesh_collision.gd" id="32_smc"]
+[ext_resource type="PackedScene" uid="uid://6q6kqa11yco6" path="res://assets/models/Space ship/Apollo Lunar Module.glb" id="33_apollo"]
+[ext_resource type="PackedScene" uid="uid://c2a2d1y082twd" path="res://assets/models/Space ship/Mars Atmosphere and Volatile EvolutioN (MAVEN) (B).glb" id="34_maven"]
+[ext_resource type="PackedScene" uid="uid://bbefu8bahoou7" path="res://perseverance_rover.tscn" id="35_perse"]
+[ext_resource type="Script" path="res://scripts/missions/mission_story.gd" id="40_story"]
+[ext_resource type="Script" path="res://scripts/missions/mission_rover_site.gd" id="41_site"]
+[ext_resource type="Script" path="res://scripts/ui/info_overlay.gd" id="42_overlay"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
 sky_material = ExtResource("7_sky")
@@ -33,7 +44,10 @@ tonemap_mode = 2
 glow_enabled = true
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_d13ii"]
-radius = 4.5
+radius = 10.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_habitat"]
+radius = 14.0
 
 [node name="main" type="Node3D" unique_id=975692537]
 
@@ -49,119 +63,148 @@ directional_shadow_max_distance = 250.0
 
 [node name="DayNightCycle" type="Node" parent="." unique_id=1525630829]
 script = ExtResource("8_cycle")
+cycle_duration = 3600.0
 
-[node name="MarsGaleCrater" parent="." unique_id=164574589 instance=ExtResource("1_ig7tw")]
+[node name="Surface" type="Node" parent="." unique_id=293332756]
+
+[node name="MarsSurface" parent="Surface" unique_id=164574589 instance=ExtResource("1_ig7tw")]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 
-[node name="Player" parent="." unique_id=2142456167 instance=ExtResource("2_0xm2m")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.9999995, 0)
-
-[node name="TerrainBody" type="StaticBody3D" parent="." unique_id=1627455417]
+[node name="MarsSurfaceBody" type="StaticBody3D" parent="Surface" unique_id=1627455417]
 transform = Transform3D(1, 0, 0, 0, -5.9604645e-08, 1, 0, -1, -5.9604645e-08, 0, 0, 0)
 script = ExtResource("3_h2yge")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="PahrumpHills1" parent="." unique_id=1253808615 instance=ExtResource("9_ph1")]
+[node name="PahrumpHills1" parent="Surface" unique_id=1253808615 instance=ExtResource("9_ph1")]
 transform = Transform3D(0.00036651274, -0.57028705, 0.008884073, 0.03077977, 0.008890902, 0.56945604, -0.5695252, 0.00011350241, 0.030781738, -5.200009, -11.040945, -302.6)
 
-[node name="PahrumpHills1Body" type="StaticBody3D" parent="." unique_id=1095793403]
+[node name="PahrumpHills1Body" type="StaticBody3D" parent="Surface" unique_id=1095793403]
 transform = Transform3D(0.00036651274, -0.57028705, 0.008884073, 0.03077977, 0.008890902, 0.56945604, -0.5695252, 0.00011350241, 0.030781738, -5.200009, -11.040945, -302.6)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills1/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="PahrumpHills1_1" parent="." unique_id=815352416 instance=ExtResource("9_ph1")]
+[node name="PahrumpHills1_1" parent="Surface" unique_id=815352416 instance=ExtResource("9_ph1")]
 transform = Transform3D(-0.56919235, -0.0019105, -0.03637128, -0.03630561, -0.015620437, 0.5689855, -0.0029020202, 0.5701391, 0.015466959, 296.2109, 4.0082216, -299.04733)
 
-[node name="PahrumpHills1_1Body" type="StaticBody3D" parent="." unique_id=461686596]
+[node name="PahrumpHills1_1Body" type="StaticBody3D" parent="Surface" unique_id=461686596]
 transform = Transform3D(-0.56919235, -0.0019105, -0.03637128, -0.03630561, -0.015620437, 0.5689855, -0.0029020202, 0.5701391, 0.015466959, 296.2109, 4.0082216, -299.04733)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills1_1/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="PahrumpHills2" parent="." unique_id=741229263 instance=ExtResource("10_ph2")]
+[node name="PahrumpHills2" parent="Surface" unique_id=741229263 instance=ExtResource("10_ph2")]
 transform = Transform3D(-0.5699452, 0.0026391312, -0.021494716, -0.021656126, -0.069458805, 0.5656969, -8.612144e-08, 0.56610507, 0.069508925, 0.5999876, 16.213345, -556.4)
 
-[node name="PahrumpHills2Body" type="StaticBody3D" parent="." unique_id=1870778005]
+[node name="PahrumpHills2Body" type="StaticBody3D" parent="Surface" unique_id=1870778005]
 transform = Transform3D(-0.5699452, 0.0026391312, -0.021494716, -0.021656126, -0.069458805, 0.5656969, -8.612144e-08, 0.56610507, 0.069508925, 0.5999876, 16.213345, -556.4)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills2/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="PahrumpHills2_1" parent="." unique_id=1180917370 instance=ExtResource("10_ph2")]
+[node name="PahrumpHills2_1" parent="Surface" unique_id=1180917370 instance=ExtResource("10_ph2")]
 transform = Transform3D(0.5703565, 8.5479506e-08, 1.0495563e-08, 0, -0.06950897, 0.5661052, -8.612144e-08, 0.5661052, 0.06950897, -301.50003, 10.618084, -556.4)
 
-[node name="PahrumpHills2_1Body" type="StaticBody3D" parent="." unique_id=1297506234]
+[node name="PahrumpHills2_1Body" type="StaticBody3D" parent="Surface" unique_id=1297506234]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -301.50003, 10.618084, -556.4)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills2_1/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="PahrumpHills2_2" parent="." unique_id=1940462498 instance=ExtResource("10_ph2")]
+[node name="PahrumpHills2_2" parent="Surface" unique_id=1940462498 instance=ExtResource("10_ph2")]
 transform = Transform3D(0.56958956, 0.003603442, -0.029346978, 0.029567378, -0.069415495, 0.565344, -8.612144e-08, 0.5661052, 0.06950896, 300.59732, 29.168228, -556.4)
 
-[node name="PahrumpHills2_2Body" type="StaticBody3D" parent="." unique_id=1640311193]
+[node name="PahrumpHills2_2Body" type="StaticBody3D" parent="Surface" unique_id=1640311193]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 300.59732, 29.168228, -556.4)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../PahrumpHills2_2/empty_2")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="SpiritRoverPath" parent="." unique_id=1798282688 instance=ExtResource("11_srp")]
+[node name="SpiritRoverPath" parent="Surface" unique_id=1798282688 instance=ExtResource("11_srp")]
 transform = Transform3D(1, 0, 0, 0, -0.034899462, 0.99939084, 0, -0.99939084, -0.034899462, -304.1, -14.100306, 1.847744e-05)
 
-[node name="SpiritRoverPathBody" type="StaticBody3D" parent="." unique_id=545162037]
+[node name="SpiritRoverPathBody" type="StaticBody3D" parent="Surface" unique_id=545162037]
 transform = Transform3D(1, 0, 0, 0, -0.034899462, 0.99939084, 0, -0.99939084, -0.034899462, -304.1, -14.100306, 1.847744e-05)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../SpiritRoverPath")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="SpiritRoverPath2" parent="." unique_id=1285573952 instance=ExtResource("11_srp")]
-transform = Transform3D(0.99713176, 0.0074973423, -0.07531254, 0.07568481, -0.09877596, 0.9922275, 3.3374006e-10, -0.99508154, -0.09906007, 300.80002, 14.199696, 1.6000185)
+[node name="MarsGaleCrater" parent="Surface" unique_id=1285573952 instance=ExtResource("21_gale")]
+transform = Transform3D(2.8273263, 0.012315595, -0.2598223, 0.260114, -0.13386516, 2.8241553, 0, -2.836082, -0.13443048, 294.58517, -4.5292788, 28.798653)
 
-[node name="SpiritRoverPathBody2" type="StaticBody3D" parent="." unique_id=394968866]
+[node name="MarsGaleCraterBody" type="StaticBody3D" parent="Surface" unique_id=394968866]
 transform = Transform3D(0.99713176, 0.0074973423, -0.07531254, 0.07568481, -0.09877596, 0.9922275, 3.3374006e-10, -0.99508154, -0.09906007, 300.80002, 14.199696, 1.6000185)
 script = ExtResource("3_h2yge")
-mesh_path = NodePath("../SpiritRoverPath2")
+mesh_path = NodePath("../MarsGaleCrater")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="VallesMarinerisB" parent="." unique_id=601897664 instance=ExtResource("12_vmb")]
+[node name="VallesMarinerisB" parent="Surface" unique_id=601897664 instance=ExtResource("12_vmb")]
 transform = Transform3D(1, 0, 0, 0, 0.052335974, 0.9986295, 0, -0.9986295, 0.052335974, -302.30002, -13.509363, -303.5)
 
-[node name="VallesMarinerisBBody" type="StaticBody3D" parent="." unique_id=688921927]
+[node name="VallesMarinerisBBody" type="StaticBody3D" parent="Surface" unique_id=688921927]
 transform = Transform3D(1, 0, 0, 0, 0.052335974, 0.9986295, 0, -0.9986295, 0.052335974, -302.30002, -13.509363, -303.5)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../VallesMarinerisB")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="VictoriaCrater" parent="." unique_id=1863361913 instance=ExtResource("13_vic")]
+[node name="VictoriaCrater" parent="Surface" unique_id=1863361913 instance=ExtResource("13_vic")]
 transform = Transform3D(0.9966783, 8.143907e-09, -0.08143907, 0.08143907, -9.966783e-08, 0.9966783, 0, -1, -1e-07, 282.9, 16.69994, 303.30002)
 
-[node name="VictoriaCraterBody" type="StaticBody3D" parent="." unique_id=72316329]
+[node name="VictoriaCraterBody" type="StaticBody3D" parent="Surface" unique_id=72316329]
 transform = Transform3D(0.9966783, 8.143907e-09, -0.08143907, 0.08143907, -9.966783e-08, 0.9966783, 0, -1, -1e-07, 282.9, 16.69994, 303.30002)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../VictoriaCrater")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="VallesMarinerisC" parent="." unique_id=2108569214 instance=ExtResource("14_vmc")]
+[node name="VallesMarinerisC" parent="Surface" unique_id=2108569214 instance=ExtResource("14_vmc")]
 transform = Transform3D(-3.8845603, 3.3959904e-07, 1.7484556e-14, 0, -2e-07, 3.8845603, 3.3959904e-07, 3.8845603, 2e-07, -303.6, -21.68786, 302.7)
 
-[node name="VallesMarinerisCBody" type="StaticBody3D" parent="." unique_id=1629670480]
+[node name="VallesMarinerisCBody" type="StaticBody3D" parent="Surface" unique_id=1629670480]
 transform = Transform3D(-3.8845603, 3.3959904e-07, 1.7484556e-14, 0, -2e-07, 3.8845603, 3.3959904e-07, 3.8845603, 2e-07, -303.6, -21.68786, 302.7)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../VallesMarinerisC")
 terrain_material = ExtResource("4_1bvp3")
 
-[node name="VallesMarinerisC2" parent="." unique_id=1730561224 instance=ExtResource("14_vmc")]
+[node name="VallesMarinerisC2" parent="Surface" unique_id=1730561224 instance=ExtResource("14_vmc")]
 transform = Transform3D(3.8650005, -2.2869166e-07, -0.389329, 0.389329, -1.9369536e-07, 3.8650005, 2.4695325e-07, 3.8845603, 1.6979952e-07, -0.099993944, -5.78786, 302.7)
 
-[node name="VallesMarinerisCBody2" type="StaticBody3D" parent="." unique_id=72652339]
+[node name="VallesMarinerisCBody2" type="StaticBody3D" parent="Surface" unique_id=72652339]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.099993944, -5.78786, 302.7)
 script = ExtResource("3_h2yge")
 mesh_path = NodePath("../VallesMarinerisC2")
 terrain_material = ExtResource("4_1bvp3")
 
+[node name="WorldBorder" type="StaticBody3D" parent="Surface" unique_id=1599531751]
+script = ExtResource("20_border")
+
+[node name="Player" parent="." unique_id=2142456167 instance=ExtResource("2_0xm2m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+
+[node name="HabitatDemonstrationUnit" type="Node3D" parent="." unique_id=811005007]
+transform = Transform3D(0.0254, 0, 0, 0, 0.0254, 0, 0, 0, 0.0254, -12, -7.33, -34)
+script = ExtResource("32_smc")
+
+[node name="Part1" parent="HabitatDemonstrationUnit" unique_id=1937463291 instance=ExtResource("30_hdu1")]
+
+[node name="Part2" parent="HabitatDemonstrationUnit" unique_id=895518167 instance=ExtResource("31_hdu2")]
+
+[node name="ApolloLunarModule" type="Node3D" parent="." unique_id=779110087]
+transform = Transform3D(1.4, 0, 0, 0, 1.4, 0, 0, 0, 1.4, 22, -5.97, -18)
+script = ExtResource("32_smc")
+
+[node name="Model" parent="ApolloLunarModule" unique_id=431866411 instance=ExtResource("33_apollo")]
+
+[node name="MAVEN" type="Node3D" parent="." unique_id=297433316]
+transform = Transform3D(0.87, 0, 0, 0, -0.15107387, -0.8567827, 0, 0.8567827, -0.15107387, -333.1, -9.4800005, -30)
+script = ExtResource("32_smc")
+
+[node name="Model" parent="MAVEN" unique_id=284787114 instance=ExtResource("34_maven")]
+
+[node name="Perseverance" parent="." unique_id=840872335 instance=ExtResource("35_perse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.4, -46)
+
 [node name="ExplorationVehicle" parent="." unique_id=706117106 groups=["rover"] instance=ExtResource("5_rover")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, -2.8, -6)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16, -2.31, 4)
 
 [node name="InteractionHUD" type="CanvasLayer" parent="." unique_id=918595 groups=["interaction_hud"]]
 layer = 10
@@ -174,18 +217,21 @@ script = ExtResource("11_2cqfq")
 layer = 9
 script = ExtResource("12_yaehf")
 
-[node name="MissionWorld" type="Node3D" parent="." unique_id=1678258888]
+[node name="InfoOverlay" type="CanvasLayer" parent="."]
+script = ExtResource("42_overlay")
 
-[node name="BoardRoverTrigger" type="Node" parent="MissionWorld" unique_id=1733391774]
+[node name="MissionWorld" type="Node3D" parent="."]
+script = ExtResource("40_story")
+
+[node name="BoardRoverTrigger" type="Node" parent="MissionWorld"]
 script = ExtResource("13_074og")
-objective_id = &"board_rover"
+objective_id = &"board_vehicle"
 source_group = &"rover"
 signal_name = &"driver_boarded"
-one_shot = true
 
-[node name="WP_BoardRover" type="Node3D" parent="MissionWorld" unique_id=203357141]
+[node name="WP_BoardRover" type="Node3D" parent="MissionWorld"]
 script = ExtResource("14_cegan")
-objective_id = &"board_rover"
+objective_id = &"board_vehicle"
 follow_group = &"rover"
 offset = Vector3(0, 3.2, 0)
 snap_to_ground = false
@@ -194,19 +240,97 @@ beacon_height = 16.0
 beacon_radius = 0.8
 ring_radius = 3.0
 
-[node name="WP_Pahrump" type="Node3D" parent="MissionWorld" unique_id=2048757483]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 20, -292)
+[node name="WP_Maven" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -333, 0, -14)
 script = ExtResource("14_cegan")
-objective_id = &"drive_to_pahrump"
+objective_id = &"reach_maven"
 offset = Vector3(0, 2, 0)
 beacon_height = 70.0
 beacon_radius = 1.4
 ring_radius = 6.0
 
-[node name="SampleSite" type="Node3D" parent="MissionWorld" unique_id=998251753]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 20, -300)
+[node name="WP_MavenCard" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -333, 0, -30)
 script = ExtResource("14_cegan")
-objective_id = &"collect_sample"
+objective_id = &"retrieve_card"
+offset = Vector3(0, 1, 0)
+create_arrival_area = false
+beacon_height = 22.0
+beacon_radius = 0.6
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="MavenCardTrigger" type="Area3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -333, -6, -30)
+script = ExtResource("16_getpj")
+objective_id = &"retrieve_card"
+prompt_text = "[F]  Speicherkarte entnehmen"
+hide_visual_on_use = false
+
+[node name="Shape" type="CollisionShape3D" parent="MissionWorld/MavenCardTrigger"]
+shape = SubResource("SphereShape3D_d13ii")
+
+[node name="WP_ReturnCard" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -20)
+script = ExtResource("14_cegan")
+objective_id = &"return_to_habitat"
+offset = Vector3(0, 2, 0)
+beacon_height = 60.0
+ring_radius = 5.0
+
+[node name="WP_ViewPicture" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -34)
+script = ExtResource("14_cegan")
+objective_id = &"view_picture"
+offset = Vector3(0, 1, 0)
+create_arrival_area = false
+beacon_height = 22.0
+beacon_radius = 0.6
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="PictureTrigger" type="Area3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -5, -34)
+script = ExtResource("16_getpj")
+objective_id = &"view_picture"
+prompt_text = "[F]  Satellitenbild ansehen"
+hide_visual_on_use = false
+required_flag = &"has_memory_card"
+
+[node name="Shape" type="CollisionShape3D" parent="MissionWorld/PictureTrigger"]
+shape = SubResource("SphereShape3D_habitat")
+
+[node name="ControlRoverTrigger" type="Node" parent="MissionWorld"]
+script = ExtResource("13_074og")
+objective_id = &"control_rover"
+source_group = &"perseverance"
+signal_name = &"control_taken"
+
+[node name="WP_ControlRover" type="Node3D" parent="MissionWorld"]
+script = ExtResource("14_cegan")
+objective_id = &"control_rover"
+follow_group = &"perseverance"
+offset = Vector3(0, 2.6, 0)
+snap_to_ground = false
+create_arrival_area = false
+beacon_height = 14.0
+beacon_radius = 0.7
+ring_radius = 2.6
+
+[node name="WP_Gale" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 224, 0, -76)
+script = ExtResource("14_cegan")
+objective_id = &"reach_gale"
+offset = Vector3(0, 2, 0)
+required_group = &"perseverance"
+beacon_height = 70.0
+beacon_radius = 1.4
+ring_radius = 6.0
+
+[node name="SampleSite" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 230, 0, -76)
+script = ExtResource("14_cegan")
+objective_id = &"take_rock_sample"
 offset = Vector3(0, 1.6, 0)
 create_arrival_area = false
 beacon_height = 26.0
@@ -214,14 +338,99 @@ beacon_radius = 0.7
 beacon_color = Color(0.98, 0.86, 0.6, 1)
 ring_radius = 2.4
 
-[node name="SampleRock" parent="MissionWorld/SampleSite" unique_id=261777392 instance=ExtResource("15_82xsv")]
+[node name="SampleRock" parent="MissionWorld/SampleSite" instance=ExtResource("15_82xsv")]
 transform = Transform3D(1.6, 0, 0, 0, 1.6, 0, 0, 0, 1.6, 0, 0, 0)
 
-[node name="SampleTrigger" type="Area3D" parent="MissionWorld/SampleSite" unique_id=706725867]
-script = ExtResource("16_getpj")
-objective_id = &"collect_sample"
+[node name="RockSite" type="Node3D" parent="MissionWorld/SampleSite"]
+script = ExtResource("41_site")
+objective_id = &"take_rock_sample"
 prompt_text = "[F]  Gesteinsprobe entnehmen"
-visual_path = NodePath("../SampleRock")
+radius = 12.0
 
-[node name="Shape" type="CollisionShape3D" parent="MissionWorld/SampleSite/SampleTrigger" unique_id=267836760]
-shape = SubResource("SphereShape3D_d13ii")
+[node name="WP_ReturnRock" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -20)
+script = ExtResource("14_cegan")
+objective_id = &"return_rock"
+offset = Vector3(0, 2, 0)
+required_group = &"perseverance"
+beacon_height = 60.0
+ring_radius = 5.0
+
+[node name="WP_AnalyzeRock" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -34)
+script = ExtResource("14_cegan")
+objective_id = &"analyze_rock"
+offset = Vector3(0, 1, 0)
+create_arrival_area = false
+beacon_height = 22.0
+beacon_radius = 0.6
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="AnalyzeRockSite" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -7, -34)
+script = ExtResource("41_site")
+objective_id = &"analyze_rock"
+mode = 1
+prompt_text = "[F]  Gesteinsprobe analysieren"
+radius = 30.0
+required_flag = &"has_rock_sample"
+
+[node name="WP_Pahrump" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28, 30, -520)
+script = ExtResource("14_cegan")
+objective_id = &"reach_pahrump"
+offset = Vector3(0, 2, 0)
+required_group = &"perseverance"
+beacon_height = 70.0
+beacon_radius = 1.4
+ring_radius = 6.0
+
+[node name="SoilSite" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 30, -520)
+script = ExtResource("14_cegan")
+objective_id = &"take_soil_sample"
+offset = Vector3(0, 1.6, 0)
+create_arrival_area = false
+beacon_height = 26.0
+beacon_radius = 0.7
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="SoilRock" parent="MissionWorld/SoilSite" instance=ExtResource("15_82xsv")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
+
+[node name="SoilSampleSite" type="Node3D" parent="MissionWorld/SoilSite"]
+script = ExtResource("41_site")
+objective_id = &"take_soil_sample"
+prompt_text = "[F]  Bodenprobe entnehmen"
+radius = 12.0
+
+[node name="WP_ReturnSoil" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -20)
+script = ExtResource("14_cegan")
+objective_id = &"return_soil"
+offset = Vector3(0, 2, 0)
+required_group = &"perseverance"
+beacon_height = 60.0
+ring_radius = 5.0
+
+[node name="WP_AnalyzeSoil" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, -34)
+script = ExtResource("14_cegan")
+objective_id = &"analyze_soil"
+offset = Vector3(0, 1, 0)
+create_arrival_area = false
+beacon_height = 22.0
+beacon_radius = 0.6
+beacon_color = Color(0.98, 0.86, 0.6, 1)
+ring_radius = 2.4
+
+[node name="AnalyzeSoilSite" type="Node3D" parent="MissionWorld"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, -7, -34)
+script = ExtResource("41_site")
+objective_id = &"analyze_soil"
+mode = 1
+prompt_text = "[F]  Bodenprobe analysieren"
+radius = 30.0
+required_flag = &"has_soil_sample"

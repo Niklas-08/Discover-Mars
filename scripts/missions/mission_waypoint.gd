@@ -36,6 +36,10 @@ extends Node3D
 @export var create_arrival_area: bool = true
 ## Radius der Ankunftszone. <= 0 uebernimmt arrival_radius aus dem Ziel.
 @export var arrival_radius_override: float = 0.0
+## Nur Koerper dieser Gruppe zaehlen als Ankunft (z. B. &"perseverance", wenn
+## der ferngesteuerte Rover das Ziel erreichen muss). Leer = Spieler oder
+## Erkundungsfahrzeug wie bisher.
+@export var required_group: StringName = &""
 
 @export_group("Leuchtfeuer")
 @export var show_beacon: bool = true
@@ -191,6 +195,8 @@ func _on_body_entered(body: Node3D) -> void:
 ## Spieler oder Rover? Der Spieler wird beim Einsteigen an den Rover geheftet,
 ## daher genuegt eine der beiden Erkennungen, beide sind aber guenstig.
 func _is_mission_actor(body: Node) -> bool:
+	if not required_group.is_empty():
+		return body.is_in_group(required_group)
 	return body.is_in_group(&"rover") or body is CharacterBody3D
 
 

@@ -72,7 +72,15 @@ var _rover_toggle_cooldown: float = 0.0
 ## Kennung, unter der dieser Controller seinen Hinweis im InteractionHUD fuehrt.
 const ROVER_PROMPT_SOURCE := &"rover"
 
+# === Fernsteuerung Perseverance (Taste R) ===
+## Steuert der Spieler gerade Perseverance fern? Der Astronaut bleibt dann
+## stehen, die Kamera folgt dem Rover.
+var remote_active: bool = false
+var perseverance: Node = null
+const REMOTE_PROMPT_SOURCE := &"perseverance"
+
 func _ready():
+	add_to_group("player")
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	camera.fov = fov
 	update_post_processing()
@@ -85,9 +93,23 @@ func _find_rover():
 		push_warning("Rover nicht gefunden! Ist die Gruppe 'rover' gesetzt?")
 
 func _input(event):
-	# Wenn im Rover: nur Aussteigen verarbeiten
+	# R: Fernsteuerung von Perseverance ein/aus - von ueberall, nur nicht aus
+	# dem MMSEV heraus (dort ist R gesperrt).
+	if event.is_action_pressed("switch_vehicle") and not in_rover and _rover_toggle_cooldown <= 0.0:
+		if remote_active:
+			_stop_remote()
+		else:
+			_start_remote()
+		return
+
+	# Waehrend der Fernsteuerung reagiert der Astronaut auf nichts weiter;
+	# WASD und F verarbeitet der Rover selbst.
+	if remote_active:
+		return
+
+	# Wenn im Rover: nur Aussteigen verarbeiten (nur mit F)
 	if in_rover:
-		if _rover_toggle_cooldown <= 0.0 and (event.is_action_pressed("interact") or event.is_action_pressed("switch_vehicle")):
+		if _rover_toggle_cooldown <= 0.0 and event.is_action_pressed("interact"):
 			_exit_rover()
 		return
 
@@ -128,6 +150,15 @@ func _physics_process(delta):
 	if in_rover:
 		# Spieler faehrt unsichtbar mit dem Rover mit
 		global_position = rover.global_position + Vector3(0, 0.5, 0)
+		return
+
+	if remote_active:
+		# Astronaut steht still, nur die Schwerkraft wirkt.
+		velocity.x = 0.0
+		velocity.z = 0.0
+		if not is_on_floor():
+			velocity.y -= gravity * delta
+		move_and_slide()
 		return
 
 	if flight_mode:
@@ -256,6 +287,15 @@ func _update_rover_prompt():
 	if hud == null or not is_instance_valid(hud):
 		hud = get_tree().get_first_node_in_group("interaction_hud")
 
+	if remote_active:
+		can_enter_rover = false
+		if hud:
+			hud.clear_prompt(ROVER_PROMPT_SOURCE)
+			var busy: bool = perseverance and perseverance.get("sampling")
+			hud.request_prompt(REMOTE_PROMPT_SOURCE,
+				"[R]  Zurück zum Astronauten" if busy else "[R]  Zurück zum Astronauten     [F]  Probe nehmen", 1)
+		return
+
 	if in_rover:
 		can_enter_rover = false
 		if hud:
@@ -272,6 +312,25 @@ func _update_rover_prompt():
 			hud.request_prompt(ROVER_PROMPT_SOURCE, "[F]  Rover betreten", 0)
 		else:
 			hud.clear_prompt(ROVER_PROMPT_SOURCE)
+
+func _start_remote():
+	if perseverance == null or not is_instance_valid(perseverance):
+		perseverance = get_tree().get_first_node_in_group("perseverance")
+	if perseverance == null or not perseverance.has_method("take_control"):
+		return
+	remote_active = true
+	_rover_toggle_cooldown = 0.4
+	velocity = Vector3.ZERO
+	perseverance.take_control()
+
+func _stop_remote():
+	remote_active = false
+	_rover_toggle_cooldown = 0.4
+	if perseverance and is_instance_valid(perseverance):
+		perseverance.release_control()
+	camera.current = true
+	if hud:
+		hud.clear_prompt(REMOTE_PROMPT_SOURCE)
 
 func _enter_rover():
 	if rover == null or not is_instance_valid(rover):

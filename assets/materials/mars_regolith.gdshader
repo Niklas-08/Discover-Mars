@@ -43,9 +43,24 @@ uniform vec4 seam_rect = vec4(0.0, 0.0, 1.0, 1.0);
 /// Local edge expansion (scale_x, scale_y, centre_x, centre_y) in the mesh's
 /// own plane - grows the tile a few metres so neighbours always overlap.
 uniform vec4 seam_expand = vec4(1.0, 1.0, 0.0, 0.0);
+/// Local box of the model (min_x, max_x, min_y, max_y). Its side walls and
+/// underside are hidden: on tilted tiles they stick up as thin walls at seams.
+uniform vec4 seam_bounds = vec4(-1e9, 1e9, -1e9, 1e9);
+
+// 1.0 on side-wall / underside vertices; faces made only of these are discarded.
+varying float box_wall;
 
 void vertex() {
+    box_wall = 0.0;
     if (seam_enabled) {
+        // Model frame: Z is elevation. Side walls lie on the box planes with
+        // horizontal normals; the underside points down.
+        float eps = 0.001 * max(seam_bounds.y - seam_bounds.x, seam_bounds.w - seam_bounds.z);
+        bool on_edge = VERTEX.x < seam_bounds.x + eps || VERTEX.x > seam_bounds.y - eps
+                    || VERTEX.y < seam_bounds.z + eps || VERTEX.y > seam_bounds.w - eps;
+        if ((on_edge && abs(NORMAL.z) < 0.5) || NORMAL.z < -0.5) {
+            box_wall = 1.0;
+        }
         VERTEX.xy = seam_expand.zw + (VERTEX.xy - seam_expand.zw) * seam_expand.xy;
     }
     world_pos    = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
@@ -82,6 +97,9 @@ void vertex() {
 }
 
 void fragment() {
+    if (box_wall > 0.999) {
+        discard;
+    }
     // Sample on the world ground plane so texel density is uniform and the
     // pattern never stretches across the terrain's UV seams.
     vec2 p = world_pos.xz;

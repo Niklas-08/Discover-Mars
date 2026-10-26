@@ -1,4 +1,4 @@
-﻿// =============================================================================
+// =============================================================================
 //  Terrain seam blender
 // =============================================================================
 //  Reads every Mars terrain tile placed in main.tscn, applies its transform
@@ -39,7 +39,9 @@ const ext = {};
 for (const m of tscn.matchAll(/\[ext_resource [^\]]*path="([^"]+)" id="([^"]+)"\]/g)) ext[m[2]] = m[1];
 const tiles = [];
 for (const b of tscn.split(/\n(?=\[)/)) {
-  const h = b.match(/^\[node name="([^"]+)" parent="\."[^\]]*instance=ExtResource\("([^"]+)"\)/);
+  // Tiles may sit at the scene root or inside a plain grouping node such as
+  // "Surface" (type Node - no transform of its own, so positions stay world).
+  const h = b.match(/^\[node name="([^"]+)" parent="(?:\.|Surface)"[^\]]*instance=ExtResource\("([^"]+)"\)/);
   if (!h) continue;
   const res = ext[h[2]];
   if (!res || !res.includes('/models/Mars/')) continue;
@@ -95,6 +97,7 @@ const smooth = (e0, e1, x) => { const t = Math.min(Math.max((x - e0) / (e1 - e0)
     const ky = 1 + 2 * MARGIN / (sy * (ly1 - ly0));
     const cx = (lx0 + lx1) / 2, cy = (ly0 + ly1) / 2;
     t.expand = [kx, ky, cx, cy];
+    t.bounds = [lx0, lx1, ly0, ly1];   // local box, used at runtime to hide side walls
 
     const W = new Float32Array(p.length);
     let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity;
@@ -171,7 +174,7 @@ const smooth = (e0, e1, x) => { const t = Math.min(Math.max((x - e0) / (e1 - e0)
       maxAbs = Math.max(maxAbs, Math.abs(d));
     }
     fs.writeFileSync(OUT + t.name + '.json', JSON.stringify({
-      tile: t.name, cell: CELL, band: BAND, margin: MARGIN, expand: t.expand,
+      tile: t.name, cell: CELL, band: BAND, margin: MARGIN, expand: t.expand, bounds: t.bounds,
       min_x: t.minX, min_z: t.minZ, nx: t.nx, nz: t.nz, max_abs: maxAbs, data }));
     console.log(`  ${t.name.padEnd(22)} grid ${t.nx}x${t.nz}  cells adjusted ${String(changed).padStart(6)}  max correction ${maxAbs.toFixed(2)} m`);
   }

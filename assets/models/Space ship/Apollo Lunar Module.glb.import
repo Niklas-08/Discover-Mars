@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cqcvxem2q1p61"
-valid=false
+uid="uid://6q6kqa11yco6"
+path="res://.godot/imported/Apollo Lunar Module.glb-1a64bbb196584acba5b24f69a3a7f35c.scn"
 
 [deps]
 
 source_file="res://assets/models/Space ship/Apollo Lunar Module.glb"
+dest_files=["res://.godot/imported/Apollo Lunar Module.glb-1a64bbb196584acba5b24f69a3a7f35c.scn"]
 
 [params]
 

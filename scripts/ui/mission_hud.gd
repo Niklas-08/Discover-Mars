@@ -21,6 +21,9 @@ var _eyebrow: Label = null
 var _title: Label = null
 var _objective_box: VBoxContainer = null
 var _banner: Label = null
+var _cargo: Label = null
+var _toast: Label = null
+var _toast_tween: Tween = null
 
 ## objective_id -> MissionObjectiveRow
 var _rows: Dictionary = {}
@@ -38,6 +41,7 @@ func _ready() -> void:
 	MissionManager.objective_activated.connect(_on_objective_activated)
 	MissionManager.objective_completed.connect(_on_objective_completed)
 	MissionManager.objective_progress_changed.connect(_on_objective_progress_changed)
+	MissionManager.cargo_changed.connect(_update_cargo)
 
 	# Laeuft bereits eine Mission (z. B. nach einem Editor-Reload), sofort zeigen.
 	if MissionManager.active_mission != null:
@@ -109,6 +113,34 @@ func _build_ui() -> void:
 	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_banner.visible = false
 	column.add_child(_banner)
+
+	# Mitgefuehrte Fracht, z. B. "FRACHT: Speicherkarte".
+	_cargo = Label.new()
+	_cargo.name = "Cargo"
+	_cargo.add_theme_font_override("font", MissionStyle.header_font())
+	_cargo.add_theme_font_size_override("font_size", MissionStyle.FONT_SIZE_COUNTER)
+	_cargo.add_theme_color_override("font_color", MissionStyle.WAYPOINT)
+	_cargo.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_cargo.visible = false
+	column.add_child(_cargo)
+
+	# Kurze Meldung oben mittig, z. B. "Speicherkarte geborgen."
+	_toast = Label.new()
+	_toast.name = "Toast"
+	_toast.add_theme_font_override("font", MissionStyle.header_font())
+	_toast.add_theme_font_size_override("font_size", 22)
+	_toast.add_theme_color_override("font_color", MissionStyle.AMBER)
+	_toast.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+	_toast.add_theme_constant_override("outline_size", 6)
+	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_toast.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	_toast.offset_left = -400.0
+	_toast.offset_right = 400.0
+	_toast.offset_top = 70.0
+	_toast.offset_bottom = 110.0
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.modulate.a = 0.0
+	add_child(_toast)
 
 	# Rahmen zuletzt und ueber dem Panel, damit er nichts vom Layout verdeckt.
 	_frame = Control.new()
@@ -207,11 +239,36 @@ func _on_mission_completed(mission: Mission) -> void:
 	_banner.text = "MISSION ABGESCHLOSSEN"
 	_banner.visible = true
 	_pulse_frame()
-
-	if not mission.debrief.is_empty():
-		print_rich("[color=#6FBF7F]%s abgeschlossen.[/color] %s" % [mission.codename, mission.debrief])
+	# Das Debriefing zeigt der MissionDirector im Info-Fenster.
 
 	await get_tree().create_timer(COMPLETE_HOLD).timeout
+	# Inzwischen kann bereits die naechste Mission laufen -- dann nicht deren
+	# Panel ausblenden.
+	if MissionManager.active_mission == mission:
+		_slide_out()
+
+
+# --- Fracht / Meldungen ---------------------------------------------------
+
+func _update_cargo() -> void:
+	var names := MissionManager.get_cargo_names()
+	_cargo.text = "FRACHT: %s" % ", ".join(names)
+	_cargo.visible = not names.is_empty()
+
+
+## Kurze Meldung oben mittig.
+func show_toast(text: String, duration: float = 2.8) -> void:
+	_toast.text = text
+	if _toast_tween != null and _toast_tween.is_valid():
+		_toast_tween.kill()
+	_toast_tween = create_tween()
+	_toast_tween.tween_property(_toast, "modulate:a", 1.0, 0.2)
+	_toast_tween.tween_interval(duration)
+	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.5)
+
+
+## Freies Spiel: Missionspanel ausblenden.
+func hide_panel() -> void:
 	_slide_out()
 
 

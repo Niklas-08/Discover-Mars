@@ -17,7 +17,7 @@ extends StaticBody3D
 ## The MeshInstance3D to trace. May also point at the instanced .glb root -
 ## the first MeshInstance3D below it is used (some NASA models ship with
 ## unnamed nodes, so their exact mesh path is not stable).
-@export var mesh_path: NodePath = ^"../MarsGaleCrater/empty_1/empty_2"
+@export var mesh_path: NodePath = ^"../MarsSurface"
 
 ## Material applied to the mesh (leave empty to keep the imported one).
 @export var terrain_material: Material
@@ -37,6 +37,8 @@ var _seam_min := Vector2.ZERO
 var _seam_cell: float = 1.0
 ## Local edge expansion (scale_x, scale_y, centre_x, centre_y)
 var _expand := Vector4(1.0, 1.0, 0.0, 0.0)
+## Local box of the model (min_x, max_x, min_y, max_y) - side walls are dropped
+var _bounds := Vector4(-1e9, 1e9, -1e9, 1e9)
 
 # Shared with worker threads (read-only while they run)
 var _src_faces: PackedVector3Array
@@ -91,6 +93,7 @@ func _ready() -> void:
 			mat.set_shader_parameter("seam_rect", Vector4(_seam_min.x, _seam_min.y,
 					_seam_nx * _seam_cell, _seam_nz * _seam_cell))
 			mat.set_shader_parameter("seam_expand", _expand)
+			mat.set_shader_parameter("seam_bounds", _bounds)
 			mi.material_override = mat
 		else:
 			mi.material_override = terrain_material
@@ -145,6 +148,9 @@ func _load_seam(tile: String) -> bool:
 	var e = parsed.get("expand")
 	if e is Array and e.size() == 4:
 		_expand = Vector4(float(e[0]), float(e[1]), float(e[2]), float(e[3]))
+	var bd = parsed.get("bounds")
+	if bd is Array and bd.size() == 4:
+		_bounds = Vector4(float(bd[0]), float(bd[1]), float(bd[2]), float(bd[3]))
 	return true
 
 
@@ -198,6 +204,33 @@ func _grow(v: Vector3) -> Vector3:
 			_expand.w + (v.y - _expand.w) * _expand.y, v.z)
 
 
+## Side wall or underside of the model's box (same rule as the shader).
+func _is_box_wall(p0: Vector3, p1: Vector3, p2: Vector3) -> bool:
+	# Godot's get_faces() uses clockwise winding, so the face normal is the
+	# NEGATED cross product (the top surface then points to +Z, as in the
+	# model). Mirroring lives only in the basis, so local winding is unchanged.
+	var n := (p2 - p0).cross(p1 - p0)
+	if n.length_squared() < 1e-12:
+		return false
+	n = n.normalized()
+	if n.z < -0.5:
+		return true
+	if absf(n.z) >= 0.5:
+		return false
+	var eps := 0.001 * maxf(_bounds.y - _bounds.x, _bounds.w - _bounds.z)
+	var planes := [_bounds.x, _bounds.y, _bounds.z, _bounds.w]
+	for side in 4:
+		var all_on := true
+		for p in [p0, p1, p2]:
+			var v: float = p.x if side < 2 else p.y
+			if absf(v - planes[side]) > eps:
+				all_on = false
+				break
+		if all_on:
+			return true
+	return false
+
+
 func _process_chunk(task: int) -> void:
 	var t0 := task * TRIS_PER_TASK
 	var t1 := mini(t0 + TRIS_PER_TASK, _src_faces.size() / 3)
@@ -206,6 +239,8 @@ func _process_chunk(task: int) -> void:
 	var w := 0
 	for t in range(t0, t1):
 		var i := t * 3
+		if _seam_nx > 0 and _is_box_wall(_src_faces[i], _src_faces[i + 1], _src_faces[i + 2]):
+			continue
 		var a := _basis * _grow(_src_faces[i])
 		var b := _basis * _grow(_src_faces[i + 1])
 		var c := _basis * _grow(_src_faces[i + 2])
@@ -221,4 +256,5 @@ func _process_chunk(task: int) -> void:
 			out[w + 1] = b
 			out[w + 2] = c
 		w += 3
+	out.resize(w)
 	_chunks[task] = out

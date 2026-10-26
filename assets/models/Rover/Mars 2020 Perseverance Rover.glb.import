@@ -3,12 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://buaeedlbvfy77"
-valid=false
+uid="uid://usabei20u5x3"
+path="res://.godot/imported/Mars 2020 Perseverance Rover.glb-b4b192efd8e86804d0dbfbc9215c4cb8.scn"
 
 [deps]
 
 source_file="res://assets/models/Rover/Mars 2020 Perseverance Rover.glb"
+dest_files=["res://.godot/imported/Mars 2020 Perseverance Rover.glb-b4b192efd8e86804d0dbfbc9215c4cb8.scn"]
 
 [params]
 

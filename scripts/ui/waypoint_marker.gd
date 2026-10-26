@@ -143,17 +143,28 @@ func _process(delta: float) -> void:
 	var screen_position := camera.unproject_position(target)
 	var bounds := Rect2(Vector2(padding, padding), view_size - Vector2(padding, padding) * 2.0)
 
-	# Hinter der Kamera liefert unproject_position gespiegelte Koordinaten.
-	if behind:
-		screen_position = center - (screen_position - center)
-
 	var off_screen := behind or not bounds.has_point(screen_position)
 	_set_visible(true)
 
 	if off_screen:
-		_show_edge_arrow(screen_position, bounds, center, distance)
+		_show_edge_arrow(_screen_direction(camera, target), bounds, center, distance)
 	else:
 		_show_on_screen(screen_position, distance)
+
+
+## Direction from the screen centre toward the target, in screen space
+## (x = right, y = down). Taken from the target's position in CAMERA space
+## instead of unproject_position(): for a target behind the camera the
+## projected point is mirrored and lands near the screen centre (exactly on it
+## when the target is straight behind), which is useless for placing an edge
+## arrow.
+func _screen_direction(camera: Camera3D, target: Vector3) -> Vector2:
+	var local := camera.global_transform.affine_inverse() * target
+	var dir := Vector2(local.x, -local.y)
+	if dir.length_squared() < 0.0001:
+		# Straight ahead/behind: nothing to the side - point down ("turn around").
+		dir = Vector2.DOWN
+	return dir.normalized()
 
 
 func _show_on_screen(screen_position: Vector2, distance: float) -> void:
@@ -174,26 +185,25 @@ func _show_on_screen(screen_position: Vector2, distance: float) -> void:
 	_place_distance(screen_position + Vector2(0.0, draw_size * 0.5 + 6.0), distance)
 
 
-func _show_edge_arrow(screen_position: Vector2, bounds: Rect2, center: Vector2, distance: float) -> void:
+func _show_edge_arrow(direction: Vector2, bounds: Rect2, center: Vector2, distance: float) -> void:
 	_diamond.visible = false
 	_arrow.visible = true
 
-	var direction := screen_position - center
-	if direction.length_squared() < 0.001:
-		direction = Vector2.UP
-
-	var clamped := Vector2(
-		clampf(screen_position.x, bounds.position.x, bounds.position.x + bounds.size.x),
-		clampf(screen_position.y, bounds.position.y, bounds.position.y + bounds.size.y)
-	)
+	# Walk from the centre along the direction until the padded screen border
+	# is reached. Unlike clamping a projected point, this always ends on the
+	# border - also for targets behind the camera.
+	var half := bounds.size * 0.5
+	var scale_x := half.x / absf(direction.x) if absf(direction.x) > 0.0001 else INF
+	var scale_y := half.y / absf(direction.y) if absf(direction.y) > 0.0001 else INF
+	var edge := center + direction * minf(scale_x, scale_y)
 
 	_arrow_angle = direction.angle()
 	_arrow_alpha = 1.0
-	_arrow.position = clamped
+	_arrow.position = edge
 	_arrow.queue_redraw()
 
 	# Beschriftung zur Bildmitte hin versetzen, damit sie nicht abgeschnitten wird.
-	_place_distance(clamped - direction.normalized() * 22.0, distance)
+	_place_distance(edge - direction * 22.0, distance)
 
 
 func _place_distance(anchor: Vector2, distance: float) -> void:

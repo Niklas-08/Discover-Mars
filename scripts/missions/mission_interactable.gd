@@ -17,6 +17,9 @@ extends Area3D
 @export var hide_visual_on_use: bool = true
 ## Nur ausloesbar, wenn das Ziel gerade aktiv ist.
 @export var require_active_objective: bool = true
+## Nur ausloesbar, wenn diese Fracht mitgefuehrt wird (z. B. &"has_memory_card").
+## Leer = keine Bedingung.
+@export var required_flag: StringName = &""
 
 @onready var _hud: CanvasLayer = get_tree().get_first_node_in_group(&"interaction_hud")
 
@@ -40,6 +43,7 @@ func _ready() -> void:
 
 	MissionManager.objective_activated.connect(_on_mission_state_changed)
 	MissionManager.objective_completed.connect(_on_mission_state_changed)
+	MissionManager.cargo_changed.connect(_refresh_prompt)
 
 
 func _exit_tree() -> void:
@@ -77,7 +81,13 @@ func _can_use() -> bool:
 		return false
 	if not _player_inside:
 		return false
+	# While the astronaut remote-drives Perseverance, F belongs to the rover.
+	var player := get_tree().get_first_node_in_group("player")
+	if player and player.get("remote_active"):
+		return false
 	if require_active_objective and not MissionManager.is_objective_active(objective_id):
+		return false
+	if not required_flag.is_empty() and not MissionManager.has_flag(required_flag):
 		return false
 	return true
 
