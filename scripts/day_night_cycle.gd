@@ -16,13 +16,18 @@ class_name DayNightCycle
 # =============================================================================
 @export_category("Cycle")
 
-## Seconds for one full day/night rotation. 120 = 2 minutes.
-@export var cycle_duration: float = 120.0:
+## Length of a real Mars day (sol): 24 h 39 min 35 s.
+const MARS_SOL_SECONDS := 88775.0
+
+## Seconds for one full day/night rotation.
+## 887.75 = 100x faster than a real sol (88775 s / 100).
+@export var cycle_duration: float = 887.75:
 	set(value):
 		cycle_duration = maxf(value, 0.1)
 
-## Current time of day (0 = midnight, 0.5 = noon). Drag to scrub the sky.
-@export_range(0.0, 1.0, 0.001) var time_of_day: float = 0.30:
+## Current time of day (0 = midnight, 0.25 = sunrise, 0.5 = noon).
+## The game starts at 05:00 (5/24 = 0.208333), shortly before sunrise.
+@export_range(0.0, 1.0, 0.001) var time_of_day: float = 0.208333:
 	set(value):
 		time_of_day = fposmod(value, 1.0)
 		_apply()
@@ -128,6 +133,11 @@ func _find_first(node: Node, type_name: String) -> Node:
 		if r:
 			return r
 	return null
+
+
+## How many times faster than real Mars time the game runs (e.g. 20).
+func get_time_scale() -> float:
+	return MARS_SOL_SECONDS / cycle_duration
 
 
 ## Direction pointing toward the sun (unit vector).

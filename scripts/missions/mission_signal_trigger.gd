@@ -62,6 +62,11 @@ func _resolve_source() -> Node:
 func _on_source_signal(_a = null, _b = null, _c = null, _d = null) -> void:
 	if one_shot and _fired:
 		return
+	# Gehoert das Ziel nicht zur laufenden Mission (z. B. R in Mission 1),
+	# still ignorieren statt den MissionManager warnen zu lassen.
+	var mission: Mission = MissionManager.active_mission
+	if mission == null or mission.get_objective(objective_id) == null:
+		return
 	_fired = true
 	MissionManager.report(objective_id, amount)
 	if one_shot and _source != null and _source.is_connected(signal_name, _on_source_signal):

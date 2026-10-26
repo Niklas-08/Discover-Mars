@@ -142,6 +142,6 @@ func _process(delta: float) -> void:
 	# Ruhiges Atmen des aktiven Zielsymbols.
 	_pulse_time += delta
 	var pulse := 0.62 + 0.38 * (0.5 + 0.5 * sin(_pulse_time * 3.4))
-	var color := MissionStyle.AMBER
+	var color := MissionStyle.ACCENT
 	color.a = pulse
 	_status_icon.modulate = color.lerp(MissionStyle.FLASH, _flash)

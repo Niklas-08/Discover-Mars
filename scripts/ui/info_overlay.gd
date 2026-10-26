@@ -202,8 +202,8 @@ func _build_ui() -> void:
 
 	_panel = PanelContainer.new()
 	_panel.name = "Panel"
-	var box := MissionStyle.panel_stylebox()
-	box.bg_color = Color(MissionStyle.PANEL_BG, 0.94)
+	var box := MissionStyle.panel_stylebox(true)   # deckend, nicht durchscheinend
+	box.chamfer = 26.0
 	box.content_margin_left = 30
 	box.content_margin_right = 30
 	box.content_margin_top = 24
@@ -215,7 +215,7 @@ func _build_ui() -> void:
 	col.add_theme_constant_override("separation", 10)
 	_panel.add_child(col)
 
-	_eyebrow = _label(MissionStyle.header_font(), 14, MissionStyle.AMBER)
+	_eyebrow = _label(MissionStyle.header_font(), 14, MissionStyle.ACCENT)
 	_eyebrow.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(_eyebrow)
 
@@ -261,7 +261,7 @@ func _build_ui() -> void:
 	_page_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	footer.add_child(_page_label)
 
-	_hint = _label(MissionStyle.header_font(), 17, MissionStyle.AMBER)
+	_hint = _label(MissionStyle.header_font(), 17, MissionStyle.ACCENT)
 	footer.add_child(_hint)
 
 	_buttons = HBoxContainer.new()
@@ -289,13 +289,17 @@ func _make_button(text: String, action: Callable) -> Button:
 	b.add_theme_font_override("font", MissionStyle.header_font())
 	b.add_theme_font_size_override("font_size", 17)
 	b.add_theme_color_override("font_color", MissionStyle.TEXT_BRIGHT)
-	b.add_theme_color_override("font_hover_color", MissionStyle.AMBER)
-	b.add_theme_color_override("font_focus_color", MissionStyle.AMBER)
+	b.add_theme_color_override("font_hover_color", MissionStyle.ACCENT)
+	b.add_theme_color_override("font_focus_color", MissionStyle.ACCENT)
 	for state in ["normal", "hover", "pressed", "focus"]:
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = Color(MissionStyle.AMBER, 0.18 if state in ["hover", "focus"] else (0.3 if state == "pressed" else 0.06))
-		sb.border_color = MissionStyle.AMBER if state != "normal" else MissionStyle.AMBER_DIM
-		sb.set_border_width_all(1)
+		var sb := ChamferStyleBox.new()
+		sb.chamfer = 9.0
+		sb.small_factor = 0.0
+		sb.bg_color = Color(MissionStyle.ACCENT, 0.18 if state in ["hover", "focus"] else (0.3 if state == "pressed" else 0.06))
+		sb.border_color = MissionStyle.ACCENT if state != "normal" else MissionStyle.ACCENT_DIM
+		sb.border_width = 1.0
+		sb.content_margin_left = 14
+		sb.content_margin_right = 14
 		sb.content_margin_top = 8
 		sb.content_margin_bottom = 8
 		b.add_theme_stylebox_override(state, sb)

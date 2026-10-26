@@ -129,7 +129,7 @@ func _build_ui() -> void:
 	_toast.name = "Toast"
 	_toast.add_theme_font_override("font", MissionStyle.header_font())
 	_toast.add_theme_font_size_override("font_size", 22)
-	_toast.add_theme_color_override("font_color", MissionStyle.AMBER)
+	_toast.add_theme_color_override("font_color", MissionStyle.ACCENT)
 	_toast.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
 	_toast.add_theme_constant_override("outline_size", 6)
 	_toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -163,7 +163,7 @@ func _build_header() -> Control:
 	badge.custom_minimum_size = Vector2(22.0, 22.0)
 	badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	badge.modulate = MissionStyle.AMBER
+	badge.modulate = MissionStyle.ACCENT
 	badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	header.add_child(badge)
@@ -177,7 +177,7 @@ func _build_header() -> Control:
 	_eyebrow.name = "Eyebrow"
 	_eyebrow.add_theme_font_override("font", MissionStyle.header_font())
 	_eyebrow.add_theme_font_size_override("font_size", MissionStyle.FONT_SIZE_EYEBROW)
-	_eyebrow.add_theme_color_override("font_color", MissionStyle.AMBER)
+	_eyebrow.add_theme_color_override("font_color", MissionStyle.ACCENT)
 	_eyebrow.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	text_column.add_child(_eyebrow)
 

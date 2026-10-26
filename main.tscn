@@ -31,6 +31,7 @@
 [ext_resource type="Script" path="res://scripts/missions/mission_story.gd" id="40_story"]
 [ext_resource type="Script" path="res://scripts/missions/mission_rover_site.gd" id="41_site"]
 [ext_resource type="Script" path="res://scripts/ui/info_overlay.gd" id="42_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/bottom_hud.gd" id="43_bottom"]
 
 [sub_resource type="Sky" id="Sky_h2yge"]
 sky_material = ExtResource("7_sky")
@@ -63,7 +64,8 @@ directional_shadow_max_distance = 250.0
 
 [node name="DayNightCycle" type="Node" parent="." unique_id=1525630829]
 script = ExtResource("8_cycle")
-cycle_duration = 3600.0
+cycle_duration = 887.75
+time_of_day = 0.208333
 
 [node name="Surface" type="Node" parent="." unique_id=293332756]
 
@@ -217,6 +219,9 @@ script = ExtResource("11_2cqfq")
 layer = 9
 script = ExtResource("12_yaehf")
 
+[node name="BottomHUD" type="CanvasLayer" parent="."]
+script = ExtResource("43_bottom")
+
 [node name="InfoOverlay" type="CanvasLayer" parent="."]
 script = ExtResource("42_overlay")
 
@@ -257,7 +262,7 @@ offset = Vector3(0, 1, 0)
 create_arrival_area = false
 beacon_height = 22.0
 beacon_radius = 0.6
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="MavenCardTrigger" type="Area3D" parent="MissionWorld"]
@@ -286,7 +291,7 @@ offset = Vector3(0, 1, 0)
 create_arrival_area = false
 beacon_height = 22.0
 beacon_radius = 0.6
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="PictureTrigger" type="Area3D" parent="MissionWorld"]
@@ -335,7 +340,7 @@ offset = Vector3(0, 1.6, 0)
 create_arrival_area = false
 beacon_height = 26.0
 beacon_radius = 0.7
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="SampleRock" parent="MissionWorld/SampleSite" instance=ExtResource("15_82xsv")]
@@ -364,7 +369,7 @@ offset = Vector3(0, 1, 0)
 create_arrival_area = false
 beacon_height = 22.0
 beacon_radius = 0.6
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="AnalyzeRockSite" type="Node3D" parent="MissionWorld"]
@@ -394,7 +399,7 @@ offset = Vector3(0, 1.6, 0)
 create_arrival_area = false
 beacon_height = 26.0
 beacon_radius = 0.7
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="SoilRock" parent="MissionWorld/SoilSite" instance=ExtResource("15_82xsv")]
@@ -423,7 +428,7 @@ offset = Vector3(0, 1, 0)
 create_arrival_area = false
 beacon_height = 22.0
 beacon_radius = 0.6
-beacon_color = Color(0.98, 0.86, 0.6, 1)
+beacon_color = Color(0.78, 0.93, 1, 1)
 ring_radius = 2.4
 
 [node name="AnalyzeSoilSite" type="Node3D" parent="MissionWorld"]

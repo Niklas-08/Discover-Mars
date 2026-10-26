@@ -79,7 +79,7 @@ func _show_satellite_picture() -> void:
 static func _list(items: Array) -> String:
 	var lines := PackedStringArray()
 	for item in items:
-		lines.append("[color=#F0A93B]–[/color]  " + item)
+		lines.append("[color=#7DD3FA]–[/color]  " + item)
 	return "\n".join(lines)
 
 
@@ -106,7 +106,7 @@ func _show_rock_analysis() -> void:
 		{
 			"eyebrow": source,
 			"title": "Auswertung – Bedeutung für mögliches früheres Leben",
-			"body": "Die Probe enthält alle wichtigen chemischen Bausteine des Lebens. Die Tonminerale entstehen, wenn relativ süßes Wasser mit vulkanischen Mineralen reagiert. Das Calciumsulfat zeigt, dass das Wasser weder stark sauer noch stark salzig war. Die Mischung aus oxidierten und nicht oxidierten Stoffen bildet ein chemisches Energiegefälle, das viele Mikroorganismen auf der Erde zum Leben nutzen.\n\nDamit war der Gale-Krater früher eine habitable Umgebung: Wasser, Bioelemente und Energiequellen waren gleichzeitig vorhanden.\n\nDie organischen Moleküle zeigen, dass sich solche Stoffe über Milliarden Jahre im Gestein erhalten können. Sie sind aber kein Beweis für Leben, denn sie können auch ohne Leben entstehen, zum Beispiel durch Meteoriten. Auch das Methan könnte durch Reaktionen zwischen Wasser und Gestein entstanden sein; eine biologische Herkunft ist jedoch nicht ausgeschlossen.\n\n[color=#F0A93B][b]Fazit:[/b][/color] Der Gale-Krater war lebensfreundlich – ob dort tatsächlich Leben existierte, bleibt offen.",
+			"body": "Die Probe enthält alle wichtigen chemischen Bausteine des Lebens. Die Tonminerale entstehen, wenn relativ süßes Wasser mit vulkanischen Mineralen reagiert. Das Calciumsulfat zeigt, dass das Wasser weder stark sauer noch stark salzig war. Die Mischung aus oxidierten und nicht oxidierten Stoffen bildet ein chemisches Energiegefälle, das viele Mikroorganismen auf der Erde zum Leben nutzen.\n\nDamit war der Gale-Krater früher eine habitable Umgebung: Wasser, Bioelemente und Energiequellen waren gleichzeitig vorhanden.\n\nDie organischen Moleküle zeigen, dass sich solche Stoffe über Milliarden Jahre im Gestein erhalten können. Sie sind aber kein Beweis für Leben, denn sie können auch ohne Leben entstehen, zum Beispiel durch Meteoriten. Auch das Methan könnte durch Reaktionen zwischen Wasser und Gestein entstanden sein; eine biologische Herkunft ist jedoch nicht ausgeschlossen.\n\n[color=#7DD3FA][b]Fazit:[/b][/color] Der Gale-Krater war lebensfreundlich – ob dort tatsächlich Leben existierte, bleibt offen.",
 		},
 	])
 
@@ -133,6 +133,6 @@ func _show_soil_analysis() -> void:
 		{
 			"eyebrow": source,
 			"title": "Auswertung – Bedeutung für mögliches früheres Leben",
-			"body": "Ton und Schluff sind auf der Erde besonders gut geeignet, um Spuren mikrobiellen Lebens zu erhalten. Vivianit kommt auf der Erde häufig in Sedimenten, Mooren und in der Nähe von zerfallender organischer Substanz vor. Greigit kann von bestimmten Mikroorganismen gebildet werden.\n\nDie Minerale sind vermutlich durch Reaktionen entstanden, bei denen Elektronen zwischen Sediment und organischer Substanz übertragen wurden – genau solche Reaktionen nutzen Mikroorganismen, um Energie zu gewinnen. Die NASA stuft den Fund deshalb als „potenzielle Biosignatur“ ein: ein Hinweis, der biologischen Ursprungs sein könnte, aber noch weitere Untersuchungen braucht.\n\nVivianit und Greigit können jedoch auch ohne Leben entstehen, etwa bei hohen Temperaturen oder unter sauren Bedingungen. Dafür gibt es hier zwar keine Hinweise, ganz ausschließen lässt sich eine nicht-biologische Entstehung aber nicht.\n\nDa das Gestein relativ jung ist, könnte der Mars außerdem länger habitabel gewesen sein als bisher angenommen.\n\n[color=#F0A93B][b]Fazit:[/b][/color] Dies ist der bisher stärkste Hinweis auf mögliches früheres Leben – ein Beweis ist es nicht.",
+			"body": "Ton und Schluff sind auf der Erde besonders gut geeignet, um Spuren mikrobiellen Lebens zu erhalten. Vivianit kommt auf der Erde häufig in Sedimenten, Mooren und in der Nähe von zerfallender organischer Substanz vor. Greigit kann von bestimmten Mikroorganismen gebildet werden.\n\nDie Minerale sind vermutlich durch Reaktionen entstanden, bei denen Elektronen zwischen Sediment und organischer Substanz übertragen wurden – genau solche Reaktionen nutzen Mikroorganismen, um Energie zu gewinnen. Die NASA stuft den Fund deshalb als „potenzielle Biosignatur“ ein: ein Hinweis, der biologischen Ursprungs sein könnte, aber noch weitere Untersuchungen braucht.\n\nVivianit und Greigit können jedoch auch ohne Leben entstehen, etwa bei hohen Temperaturen oder unter sauren Bedingungen. Dafür gibt es hier zwar keine Hinweise, ganz ausschließen lässt sich eine nicht-biologische Entstehung aber nicht.\n\nDa das Gestein relativ jung ist, könnte der Mars außerdem länger habitabel gewesen sein als bisher angenommen.\n\n[color=#7DD3FA][b]Fazit:[/b][/color] Dies ist der bisher stärkste Hinweis auf mögliches früheres Leben – ein Beweis ist es nicht.",
 		},
 	])

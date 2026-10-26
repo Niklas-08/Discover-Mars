@@ -13,25 +13,29 @@ extends RefCounted
 
 # --- Farben ---------------------------------------------------------------
 
-## Bernstein: Kopfzeile, Rahmen, aktives Ziel.
-const AMBER := Color(0.941, 0.663, 0.231)
-const AMBER_DIM := Color(0.941, 0.663, 0.231, 0.55)
-const AMBER_FAINT := Color(0.941, 0.663, 0.231, 0.22)
+## Hellblau: Kopfzeile, Rahmen, aktives Ziel. (Das Blau der Mars-
+## Daemmerung aus mars_sky.gdshader, deutlich aufgehellt.)
+const ACCENT := Color(0.49, 0.83, 0.98)
+const ACCENT_DIM := Color(0.49, 0.83, 0.98, 0.55)
+const ACCENT_FAINT := Color(0.49, 0.83, 0.98, 0.22)
 
-## Heller Fliesstext.
-const TEXT_BRIGHT := Color(0.945, 0.925, 0.898)
+## Heller Fliesstext (kuehles Weiss).
+const TEXT_BRIGHT := Color(0.91, 0.95, 0.98)
 ## Gedaempft: noch gesperrte Ziele.
-const TEXT_MUTED := Color(0.541, 0.482, 0.431)
+const TEXT_MUTED := Color(0.47, 0.55, 0.62)
 ## Erfuellte Ziele.
-const DONE_GREEN := Color(0.435, 0.749, 0.498)
-const DONE_TEXT := Color(0.478, 0.541, 0.494)
+const DONE_GREEN := Color(0.435, 0.812, 0.62)
+const DONE_TEXT := Color(0.47, 0.6, 0.55)
 
-## Panelhintergrund: warmes Fast-Schwarz.
-const PANEL_BG := Color(0.055, 0.043, 0.039, 0.82)
+## Hintergrund von Missionsmenue und Tastenhinweis: dunkles Blauschwarz,
+## leicht durchscheinend.
+const PANEL_BG := Color(0.02, 0.05, 0.08, 0.62)
+## Hintergrund des Info-Fensters: deckend, damit lange Texte lesbar bleiben.
+const PANEL_BG_SOLID := Color(0.02, 0.045, 0.07, 1.0)
 
 ## Wegpunktmarker.
-const WAYPOINT := Color(0.42, 0.80, 0.92)
-const WAYPOINT_DIM := Color(0.42, 0.80, 0.92, 0.65)
+const WAYPOINT := Color(0.49, 0.83, 0.98)
+const WAYPOINT_DIM := Color(0.49, 0.83, 0.98, 0.65)
 
 ## Kurzes Aufblitzen beim Erfuellen eines Ziels.
 const FLASH := Color(1.0, 1.0, 1.0)
@@ -88,15 +92,13 @@ static func icon(icon_name: String) -> Texture2D:
 	return load(path) as Texture2D
 
 
-## Hintergrund des Missionspanels. Der Rahmen wird vom MissionPanelFrame
-## gezeichnet, damit er animierbar bleibt.
-static func panel_stylebox() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = PANEL_BG
-	box.corner_radius_top_left = 2
-	box.corner_radius_top_right = 2
-	box.corner_radius_bottom_left = 2
-	box.corner_radius_bottom_right = 2
+## Hintergrund des Missionspanels: diagonal abgeschnittene Ecken, leicht
+## durchscheinend. Der Rahmen wird vom MissionPanelFrame gezeichnet, damit
+## er animierbar bleibt.
+static func panel_stylebox(solid: bool = false) -> ChamferStyleBox:
+	var box := ChamferStyleBox.new()
+	box.bg_color = PANEL_BG_SOLID if solid else PANEL_BG
+	box.chamfer = CORNER_BRACKET + 4.0
 	box.content_margin_left = PANEL_PADDING_H
 	box.content_margin_right = PANEL_PADDING_H
 	box.content_margin_top = PANEL_PADDING_V
@@ -108,7 +110,7 @@ static func panel_stylebox() -> StyleBoxFlat:
 static func state_color(state: int) -> Color:
 	match state:
 		MissionManager.State.ACTIVE:
-			return AMBER
+			return ACCENT
 		MissionManager.State.DONE:
 			return DONE_GREEN
 		_:

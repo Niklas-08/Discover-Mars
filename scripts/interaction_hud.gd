@@ -98,7 +98,7 @@ func _build_ui() -> void:
 	_key_label.name = "Key"
 	_key_label.add_theme_font_override("font", MissionStyle.header_font())
 	_key_label.add_theme_font_size_override("font_size", FONT_SIZE_KEY)
-	_key_label.add_theme_color_override("font_color", MissionStyle.AMBER)
+	_key_label.add_theme_color_override("font_color", MissionStyle.ACCENT)
 	_key_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_key_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_key_wrap.add_child(_key_label)
@@ -120,7 +120,7 @@ func _build_ui() -> void:
 	_panel.add_child(_frame)
 
 
-func _prompt_stylebox() -> StyleBoxFlat:
+func _prompt_stylebox() -> StyleBox:
 	var box := MissionStyle.panel_stylebox()
 	box.content_margin_left = 18.0
 	box.content_margin_right = 20.0
@@ -129,12 +129,14 @@ func _prompt_stylebox() -> StyleBoxFlat:
 	return box
 
 
-func _keycap_stylebox() -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = Color(MissionStyle.AMBER.r, MissionStyle.AMBER.g, MissionStyle.AMBER.b, 0.14)
-	box.border_color = MissionStyle.AMBER_DIM
-	box.set_border_width_all(1)
-	box.set_corner_radius_all(2)
+## Tastenkappe mit schraegen Ecken, passend zur Panelform.
+func _keycap_stylebox() -> StyleBox:
+	var box := ChamferStyleBox.new()
+	box.bg_color = Color(MissionStyle.ACCENT, 0.14)
+	box.border_color = MissionStyle.ACCENT_DIM
+	box.border_width = 1.0
+	box.chamfer = 6.0
+	box.small_factor = 0.0
 	box.content_margin_left = 10.0
 	box.content_margin_right = 10.0
 	box.content_margin_top = 2.0

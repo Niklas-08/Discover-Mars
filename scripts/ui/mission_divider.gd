@@ -18,7 +18,7 @@ func _ready() -> void:
 func _draw() -> void:
 	if size.x <= 0.0:
 		return
-	var color := MissionStyle.AMBER_FAINT
+	var color := MissionStyle.ACCENT_FAINT
 	color.a *= line_alpha
 	var x := 0.0
 	var y := size.y * 0.5
