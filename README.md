@@ -20,7 +20,7 @@ All in-game text is written in German.
 - First-person and third-person exploration on foot (walk, sprint, crouch, jump, flashlight)
 - The **Mars Exploration Vehicle**: drivable with physical suspension and headlights
 - The **Perseverance rover**: remote-controlled from anywhere, with spinning and steering wheels and an animated robotic arm for taking samples
-- Twelve real 3D terrain tiles (including Gale Crater and Pahrump Hills) with exact collision, smoothed seams between tiles and an invisible world border
+- Twelve real 3D terrain tiles (including Gale Crater and Pahrump Hills) with exact collision and an invisible world border
 - Crashed MAVEN orbiter, Habitat Demonstration Unit and Apollo Lunar Module placed in the world
 - A Mars day/night cycle running 100× faster than a real sol, with a Martian sky (butterscotch by day, blue at sunset, stars at night)
 - A futuristic light-blue interface: mission tracker, interaction prompts, key hints, and a status bar with speed, Mars local time, gravity and air pressure
@@ -96,17 +96,7 @@ The current keys are also shown in the bottom-left corner of the screen.
 
 ### Exporting
 
-The project includes a Windows export preset (`export_presets.cfg`) that packs the whole game into a single `.exe` and includes the terrain seam data. Before exporting, disable the Godot AI plugin (Project → Project Settings → Plugins) so its game helper is not included in the build.
-
-### Terrain seams
-
-The height transitions between terrain tiles are precomputed. After moving, adding or removing a tile, regenerate them:
-
-```text
-cd tools
-npm install @gltf-transform/core @gltf-transform/extensions
-node blend_seams.js
-```
+The project includes a Windows export preset (`export_presets.cfg`) that packs the whole game into a single `.exe`. Before exporting, disable the Godot AI plugin (Project → Project Settings → Plugins) so its game helper is not included in the build.
 
 ## Project Structure
 
@@ -115,13 +105,11 @@ node blend_seams.js
 |-- assets/
 |   |-- materials/        # Materials and shaders (terrain, sky, beacon)
 |   |-- models/           # 3D models and textures
-|   |-- terrain_seams/    # Precomputed tile seam data
 |   `-- ui/               # Interface icons and pictures
 |-- scripts/
 |   |-- missions/         # Mission data, manager and world nodes
 |   |-- ui/               # Mission HUD, info window, bottom bar, styling
 |   `-- ...               # Rovers, terrain, world border, day/night cycle
-|-- tools/                # Terrain seam tool (not part of the game)
 |-- main.tscn             # Main scene
 |-- player.tscn
 |-- exploration_vehicle.tscn
@@ -131,15 +119,23 @@ node blend_seams.js
 
 ## Sources and Attribution
 
-The 3D models of the Martian surface, the vehicles, the rovers and the spacecraft were obtained from [NASA's 3D Resources catalog](https://science.nasa.gov/3d-resources/). NASA resources remain subject to the [NASA Images and Media Usage Guidelines](https://www.nasa.gov/nasa-brand-center/images-and-media/). Other third-party assets may have separate attribution and licensing requirements.
+The 3D models of the Martian surface, the vehicles, the rovers and the spacecraft were obtained from NASA's 3D Resources catalog (vgl. NASA o. J.). NASA resources remain subject to the NASA Images and Media Usage Guidelines. Other third-party assets may have separate attribution and licensing requirements.
 
-Scientific content in the missions is based on:
+Scientific content in the missions is based on the following sources:
 
-- NASA/JPL (2013): *NASA Rover Finds Conditions Once Suited for Ancient Life on Mars*
-- NASA (2018): *NASA Finds Ancient Organic Material, Mysterious Methane on Mars*
-- NASA (2025): *NASA Says Mars Rover Discovered Potential Biosignature Last Year*
-- NASA (2015): *NASA Mission Reveals Speed of Solar Wind Stripping Martian Atmosphere*
-- Haberle et al. (2014): *Preliminary interpretation of the REMS pressure data from the first 100 sols of the MSL mission*, JGR Planets 119
+Haberle, R. M./Gómez-Elvira, J./de la Torre Juárez, M./Harri, A.-M./Hollingsworth, J. L./Kahanpää, H. et al. (2014): Preliminary interpretation of the REMS pressure data from the first 100 sols of the MSL mission. In: Journal of Geophysical Research: Planets 119 (3), S. 440–453. URL: https://doi.org/10.1002/2013JE004488 (Abruf: 26.10.2026). [im Text: Haberle et al. 2014]
+
+o. V. (o. J.): 3D Resources. NASA Science. URL: https://science.nasa.gov/3d-resources/ (Abruf: 26.10.2026). [im Text: NASA o. J.]
+
+o. V. (2013): NASA Rover Finds Conditions Once Suited for Ancient Life on Mars (Release 2013-092, 12.03.2013). NASA Jet Propulsion Laboratory. URL: https://www.jpl.nasa.gov/news/nasa-rover-finds-conditions-once-suited-for-ancient-life-on-mars/ (Abruf: 24.10.2026). [im Text: NASA/JPL 2013]
+
+o. V. (2015): NASA Mission Reveals Speed of Solar Wind Stripping Martian Atmosphere (Release 15-217, 05.11.2015). NASA. URL: https://www.nasa.gov/news-release/nasa-mission-reveals-speed-of-solar-wind-stripping-martian-atmosphere/ (Abruf: 11.10.2026). [im Text: NASA 2015]
+
+o. V. (2018): NASA Finds Ancient Organic Material, Mysterious Methane on Mars (Release 18-050, 07.06.2018). NASA. URL: https://www.nasa.gov/news-release/nasa-finds-ancient-organic-material-mysterious-methane-on-mars/ (Abruf: 24.10.2026). [im Text: NASA 2018]
+
+o. V. (2025): NASA Says Mars Rover Discovered Potential Biosignature Last Year (Release 25-061, 10.09.2025). NASA. URL: https://www.nasa.gov/news-release/nasa-says-mars-rover-discovered-potential-biosignature-last-year/ (Abruf: 24.10.2026). [im Text: NASA 2025]
+
+Williams, D. R. (o. J.): Mars Fact Sheet. NASA Space Science Data Coordinated Archive. URL: https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html (Abruf: 26.10.2026). [im Text: Williams o. J.]
 
 ## License
 
